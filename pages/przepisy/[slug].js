@@ -37,10 +37,17 @@ export default function DrinkDetails({ drink }) {
     const router = useRouter();
 
     console.log(drink)
-    const { ingredient1, ingredient2, ingredient3, ingredient4, ingredient5, ingredient6, measure1, measure2, measure3, measure4, measure5, measure6 } = drink;
+    const { ingredient1, ingredient2, ingredient3, ingredient4, ingredient5, ingredient6, measure1, measure2, measure3, measure4, measure5, measure6, description } = drink;
     const ingredientList = [ingredient1, ingredient2, ingredient3, ingredient4, ingredient5, ingredient6,];
     console.log(ingredientList)
     const measureList = [measure1, measure2, measure3, measure4, measure5, measure6];
+
+    const youtubeParser = (url) => {
+        let regExp = /^.*((youtu.be\/)|(v\/)|(\/u\/\w\/)|(embed\/)|(watch\?))\??v?=?([^#&?]*).*/;
+        let match = url.match(regExp);
+        return (match && match[7].length == 11) ? match[7] : false;
+    }
+
 
 
     //USUWANIE
@@ -59,6 +66,7 @@ export default function DrinkDetails({ drink }) {
             }
         }
     }
+    //console.log(drink.video)
     return (
         <div>
             <Link href="/"><a><button>Strona Główna</button></a></Link>
@@ -75,7 +83,11 @@ export default function DrinkDetails({ drink }) {
             {measureList.map((measure, id) => measure ?
                 <li key={id}>{measure}</li> : null
             )}
+            <p>{description}</p>
             {drink.image && <img src={drink.image.formats.thumbnail.url} width="200px" height="200px" alt="" />}
+            {drink.video &&
+                <iframe src={`https://www.youtube.com/embed/${youtubeParser(drink.video)}`} width="200" height="200" target="_parent"></iframe>
+            }
         </div>
     )
 }
