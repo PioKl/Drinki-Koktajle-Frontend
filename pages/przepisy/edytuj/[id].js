@@ -1,3 +1,5 @@
+import { ToastContainer, toast } from 'react-toastify';
+import 'react-toastify/dist/ReactToastify.css';
 import { useState } from 'react';
 import { useRouter } from 'next/router';
 import Link from 'next/link';
@@ -19,8 +21,24 @@ export default function EditDrink({ drink }) {
 
     const router = useRouter();
 
+    const toastYoutubeError = "toast-youtube-error";
+    const ToastYoutubeError = () => {
+        toast.error(<div>
+            Link jest nieprawidłowy!<br /><br />
+            Prawidłowe przykłady: <br /><br />
+            https://www.youtube.com/watch?v=ABCDEFGHIJK <br /><br />
+            https://www.youtube.com/watch?v=ABCDEFGHIJK&t=269s <br /><br />
+            https://www.youtube.com/watch?v=ABCDEFGHIJK?t=269s <br /><br />
+            https://www.youtube.com/embed/ABCDEFGHIJK?start=199
+
+        </div>, {
+            toastId: toastYoutubeError
+        });
+    }
+
     const [values, setValues] = useState({
         name: drink.name,
+        description: drink.description,
         ingredient1: drink.ingredient1,
         ingredient2: drink.ingredient2,
         ingredient3: drink.ingredient3,
@@ -32,7 +50,8 @@ export default function EditDrink({ drink }) {
         measure3: drink.measure3,
         measure4: drink.measure4,
         measure5: drink.measure5,
-        measure6: drink.measure6
+        measure6: drink.measure6,
+        video: drink.video,
     })
 
     //Zmienna, która pobiera obrazek z bazy danych, a także umożliwia jego zmianę
@@ -60,8 +79,39 @@ export default function EditDrink({ drink }) {
     }
     const messages = {
         name_empty: 'Drink musi mieć nazwę',
-        ingredientOrMeasure_empty: 'Składnik musi mieć ilość, a ilość musi dotyczyć składnika'
+        ingredientOrMeasure_empty: 'Składnik musi mieć nazwę i ilość',
     }
+
+    const youtubeParser = (url) => {
+
+        let regExp = /^((?:https?:)?\/\/)?((?:www|m)\.)?((?:youtube\.com|youtu.be))(\/(?:[\w\-]+\?v=|embed\/|v\/)?)([\w\-]+)(\S+)?$/;
+        let match = url.match(regExp);
+        console.log(match)
+
+        //Jeśli match istnieje (url jest zgodony z regexpem) i istnieje match[6], a match[6] jest wtedy, gdy film na youtube ma końcówkę &t, bądź ?t, czyli jeśli użytkownik chce rozpocząć od danego momentu (np. &t=269s) i jeśli match[5] ma długość jedenastu znaków (gdyż każdy film na youtube, ma takie końcówki) oraz jeśli liczba znaków match[6] jest większa od 3, czyli od (&t=) wówczas wykonaj warunek
+        if (match && match[6] && match[5].length == 11 && match[6].length > 3) {
+
+            //jeśli początek match[6] zawiera znaki &t i ?t, wtedy do match[5] dołącz do stringa "?start=", wszystko co zawiera się w match[6] z wyjątkiem jego 3 pierwszych znaków (&t= lub ?t=) oraz dodatkowo odejmij ostatni znak (s, który oznacza sekundę)
+            if (match[6].slice(0, 2).includes("&t" || "?t")) {
+                return match[5] + "?start=" + match[6].slice(3).slice(0, -1);
+            }
+            //natomiast jeśli match[6] nie zawiera takich znaków wtedy połącz strinki match[5] z match[6], czyli standardowa końcówka filmu na youtube + cała sekwencja start np. ?start=199
+            else {
+                return match[5] + match[6];
+            }
+
+        }
+        //Jeśli istnieje match zgdony z regeExpem i liczba znaków w match[5] wynosi 11, wtedy zwróć tylko match[5], czyli standardową końcówkę filmu na youtube (film włącza się od początku)
+        else if (match && match[5].length == 11) {
+            return match[5]
+        }
+        //w przeciwnym wypadku zakończ
+        else {
+            ToastYoutubeError();
+            return
+        }
+    }
+
 
     const handleInputChange = (e) => {
         e.preventDefault();
@@ -79,7 +129,6 @@ export default function EditDrink({ drink }) {
         })
     }
 
-
     //Funkcja odpowiadająca za walidację
     const formValidation = () => {
         //Wczesna wersja walidacji
@@ -90,6 +139,7 @@ export default function EditDrink({ drink }) {
                 ...prev,
                 name: messages.name_empty,
             }));
+            toast.error("Drink lub koktajl musi mieć nazwę!")
         }
         else if (values.name !== "") {
             valuesEmpty.nameEmpty = false;
@@ -99,7 +149,7 @@ export default function EditDrink({ drink }) {
             }));
         }
 
-        for (let i = 1; i <= 6; i++) {
+        for (let i = 1; i <= Object.keys(valuesEmpty).length - 1; i++) {
             console.log(eval(`values.ingredient${i}`))
             console.log(eval(`values.measure${i}`))
             if (eval(`values.ingredient${i}`) === "" && eval(`values.measure${i}`) !== "") {
@@ -108,6 +158,7 @@ export default function EditDrink({ drink }) {
                     ...prev,
                     ingredientsAndMeasures${i}: messages.ingredientOrMeasure_empty,
                 }))`)
+                toast.error(`Składnik numer ${i} musi mieć nazwę! `)
             }
             else if (eval(`values.ingredient${i}`) !== "" && eval(`values.measure${i}`) === "") {
                 eval(`valuesEmpty.ingredientsAndMeasuresEmpty${i} = true`);
@@ -115,6 +166,7 @@ export default function EditDrink({ drink }) {
                     ...prev,
                     ingredientsAndMeasures${i}: messages.ingredientOrMeasure_empty,
                 }))`)
+                toast.error(`Składnik numer ${i} musi mieć podaną ilość!`)
             }
             else if (eval(`values.ingredient${i}`) !== "" && eval(`values.measure${i}`) !== "") {
                 eval(`valuesEmpty.ingredientsAndMeasuresEmpty${i} = false`);
@@ -135,9 +187,12 @@ export default function EditDrink({ drink }) {
 
         if (valuesEmpty.nameEmpty === false && valuesEmpty.ingredientsAndMeasuresEmpty1 === false && valuesEmpty.ingredientsAndMeasuresEmpty2 === false && valuesEmpty.ingredientsAndMeasuresEmpty3 === false && valuesEmpty.ingredientsAndMeasuresEmpty4 === false && valuesEmpty.ingredientsAndMeasuresEmpty5 === false && valuesEmpty.ingredientsAndMeasuresEmpty6 === false) {
             validation = true;
+            toast.success("Sukces!")
+        }
+        else {
+            return
         }
     }
-
 
     const handleSubmit = async e => {
 
@@ -165,13 +220,14 @@ export default function EditDrink({ drink }) {
                 const drink = await res.json()
                 router.push(`/przepisy/${drink.slug}`)
             }
-        }
+        } else return
 
     }
-
+    console.log(values)
     return (
         <div>
             <h1>Edit Drink</h1>
+            <ToastContainer />
             <form onSubmit={handleSubmit}>
                 <div>
                     <label htmlFor="name">Nazwa drinka</label>
@@ -221,6 +277,10 @@ export default function EditDrink({ drink }) {
                 </div>
                 {errors.ingredientsAndMeasures6 && <span style={{ color: "red" }}>{messages.ingredientOrMeasure_empty}</span>}
                 <div>
+                    <label htmlFor="description">Opis</label>
+                    <textarea type="text" name="description" id="description" value={values.description} onChange={handleInputChange}></textarea>
+                </div>
+                <div>
 
                     <h2>Zdjęcie</h2>
                     {drinkImage.newImagePreview !== null ?
@@ -236,6 +296,19 @@ export default function EditDrink({ drink }) {
                             </div>
                     }
                     <input type="file" onChange={handleFileChange} />
+                </div>
+                <div>
+                    <h2>Film instruktażowy</h2>
+                    <input type="text" id="video" name="video" value={values.video} onChange={handleInputChange} />
+                    {values.video !== (null || "") ?
+                        <div>
+                            <iframe src={`https://www.youtube.com/embed/${youtubeParser(values.video)}`} width="500" height="150" target="_parent"></iframe>
+                        </div>
+                        :
+                        <div>
+                            <h2>Nie ma filmu</h2>
+                        </div>
+                    }
                 </div>
                 <input type="submit" value="Edytuj Drinka" />
                 <Link href={`/przepisy/${drink.slug}`}><a><button>Anuluj</button></a></Link>
