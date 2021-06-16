@@ -184,7 +184,7 @@ export default function EditDrink({ drink }) {
             }
         }
 
-
+        console.log(youtubeParser(values.video))
         if (valuesEmpty.nameEmpty === false && valuesEmpty.ingredientsAndMeasuresEmpty1 === false && valuesEmpty.ingredientsAndMeasuresEmpty2 === false && valuesEmpty.ingredientsAndMeasuresEmpty3 === false && valuesEmpty.ingredientsAndMeasuresEmpty4 === false && valuesEmpty.ingredientsAndMeasuresEmpty5 === false && valuesEmpty.ingredientsAndMeasuresEmpty6 === false) {
             validation = true;
             toast.success("Sukces!")
@@ -300,7 +300,7 @@ export default function EditDrink({ drink }) {
                 <div>
                     <h2>Film instruktażowy</h2>
                     <input type="text" id="video" name="video" value={values.video} onChange={handleInputChange} />
-                    {values.video !== (null || "") ?
+                    {values.video !== null || "" ?
                         <div>
                             <iframe src={`https://www.youtube.com/embed/${youtubeParser(values.video)}`} width="500" height="150" target="_parent"></iframe>
                         </div>
