@@ -9,6 +9,9 @@ export default function LoginPage() {
     const [password, setPassword] = useState('');
 
     const {login, error} = useContext(AuthContext);
+
+    //Jeśli istnieje błąd, błąd się zmienił wyświetl
+    useEffect(() => error && toast.error(error));
     
     const handleSubmit = (e) => {
         e.preventDefault();
@@ -22,11 +25,11 @@ export default function LoginPage() {
             <form onSubmit={handleSubmit}>
                 <div>
                     <label htmlFor="email">Adres email</label>
-                    <input type="email" id="email" value={email} required onChange={(e) => setEmail(e.target.value)}/>
+                    <input type="email" id="email" value={email} onChange={(e) => setEmail(e.target.value)}/>
                 </div>
                 <div>
                     <label htmlFor="password">Hasło</label>
-                    <input type="password" id="password" value={password} required onChange={(e) => setPassword(e.target.value)}/>
+                    <input type="password" id="password" value={password} onChange={(e) => setPassword(e.target.value)}/>
                 </div>
                 <input type="submit" value="Zaloguj" />
             </form>
