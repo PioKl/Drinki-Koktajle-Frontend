@@ -5,12 +5,14 @@ import Link from 'next/link';
 import AuthContext from "@/context/AuthContext";
 
 export default function RegisterPage() {
-    const [userName, setUserName] = useState('');
+    const [username, setUserName] = useState('');
     const [email, setEmail] = useState('');
     const [password, setPassword] = useState('');
     const [passwordConfirm, setPasswordConfirm] = useState('');
 
     const { register, error } = useContext(AuthContext);
+
+    useEffect(() => error && toast.error(error));
     
     const handleSubmit = (e) => {
         e.preventDefault();
@@ -18,8 +20,16 @@ export default function RegisterPage() {
             toast.error('Hasła się nie zgadzają')
             return
         }
+        else if (username === '') {
+            toast.error('Podaj nazwę użytkownika')
+            return
+        }
+        else if (email === '') {
+            toast.error('Podaj adres email')
+            return
+        }
 
-        register({userName, email, password})
+        register({username, email, password})
     }
 
     return (
@@ -29,19 +39,19 @@ export default function RegisterPage() {
             <form onSubmit={handleSubmit}>
             <div>
                     <label htmlFor="userName">Nazwa użytkownika</label>
-                    <input type="text" id="userName" value={userName} required onChange={(e) => setUserName(e.target.value)}/>
+                    <input type="text" id="userName" value={username} onChange={(e) => setUserName(e.target.value)}/>
                 </div>
                 <div>
                     <label htmlFor="email">Adres email</label>
-                    <input type="email" id="email" value={email} required onChange={(e) => setEmail(e.target.value)}/>
+                    <input type="email" id="email" value={email} onChange={(e) => setEmail(e.target.value)}/>
                 </div>
                 <div>
                     <label htmlFor="password">Hasło</label>
-                    <input type="password" id="password" value={password} required onChange={(e) => setPassword(e.target.value)}/>
+                    <input type="password" id="password" value={password} onChange={(e) => setPassword(e.target.value)}/>
                 </div>
                 <div>
                     <label htmlFor="passwordConfirm">Potwierdź Hasło</label>
-                    <input type="password" id="passwordConfirm" value={passwordConfirm} required onChange={(e) => setPasswordConfirm(e.target.value)}/>
+                    <input type="password" id="passwordConfirm" value={passwordConfirm} onChange={(e) => setPasswordConfirm(e.target.value)}/>
                 </div>
                 <input type="submit" value="Zarejestruj" />
             </form>
