@@ -58,7 +58,14 @@ export const AuthProvider = ({ children }) => {
 
     //Wylogowanie użytkownika
     const logout = async () => {
-        console.log('Wylogowano')
+        //Wywołanie fetch do logout w celu usunięcia ciasteczka, w celu wylogowania się
+        const response = await fetch(`${NEXT_URL}/api/logout`, {
+            method: 'POST',
+        })
+        if (response.ok) {
+            setUser(null);
+            router.push('/');
+        }
     }
 
     //Sprawdzenie, czy użytkownik jest zalogowany
