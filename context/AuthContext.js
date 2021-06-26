@@ -1,5 +1,5 @@
 import { createContext, useState, useEffect } from 'react';
-import { useRouter } from 'next/router';
+import router, { useRouter } from 'next/router';
 import { NEXT_URL } from '@/config/index';
 
 const AuthContext = createContext();
@@ -8,6 +8,9 @@ export const AuthProvider = ({ children }) => {
     const [user, setUser] = useState(null);
     const [error, setError] = useState(null);
 
+    //sprawdzanie, czy użytkownik się zmienił
+    useEffect(() => checkUserLoggedIn(), []);
+
     //Rejestracja użytkownika
     const register = async (user) => {
         console.log(user)
@@ -15,7 +18,6 @@ export const AuthProvider = ({ children }) => {
     //Logowanie użytkownika
     //zmiana email na identifier, ponieważ strapi podczas prośby/żądania logowania potrzebuje zmiennej identifier, jest to tak zrobione ponieważ można się zalogować poprzez email, bądź nazwę użytkownika i robiąc email:identifier będzie to oznaczało, że indentifier potrzebny do logowania to będzie email, a email zostanie zmieniony na indenfitifer
     const login = async ({ email: identifier, password }) => {
-        console.log({ identifier, password })
 
         //komunikacja z api (z login)
         //przesłanie identifier i password do api/login
@@ -32,11 +34,11 @@ export const AuthProvider = ({ children }) => {
         //w data są dane zwrotne z api/login
         const data = await response.json();
 
-        console.log(data);
-
         //Jeśli odpowiedź jest prawidłowa, dane z bazy danych w strapi są prawidłowe z tymi z api/login to ustaw te dane za pomocą setUser, user dysponuje w tym momencie poprawnymi danymi z zalogowania
         if (response.ok) {
             setUser(data.user);
+            //po prawidłowym zalogowaniu przekieruj użytkownika w te miejsce
+            router.push('/konto/moje-drinki');
         }
         //jeśli natomiast odpowiedź była nieprawidłowa (błędny login, czy hasło), to ustaw te błędy w zmiennej error za pomocą setError
         else {
@@ -61,7 +63,15 @@ export const AuthProvider = ({ children }) => {
 
     //Sprawdzenie, czy użytkownik jest zalogowany
     const checkUserLoggedIn = async (user) => {
-        console.log('Sprawdź')
+        const response = await fetch(`${NEXT_URL}/api/user`);
+        const data = await response.json(); //tutaj będą dane ze strapiego jeśli są prawidłowe, tak jak w logowaniu, jeśli użytkownik jest prawidłowy, czyli token w api/user się zgadza, wtedy w data będą się znajdowały dane użytkownika z bazy danych strapi
+
+        //Jeśli wszystko się zgadza
+        if (response.ok) {
+            setUser(data.user); //ustaw user na danego użytkownika z bazy danych strapi
+        } else {
+            setUser(null);
+        }
     }
 
     return (
