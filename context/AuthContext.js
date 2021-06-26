@@ -13,8 +13,36 @@ export const AuthProvider = ({ children }) => {
 
     //Rejestracja użytkownika
     const register = async (user) => {
-        console.log(user)
+        //komunikacja z api (z register)
+        //przesłanie username, email i password do api/register
+        const response = await fetch(`${NEXT_URL}/api/register`, {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify(user) //przesłanie obiektu user, który zawiera username, email i password
+        })
+        //w data są dane zwrotne z api/register
+        const data = await response.json();
+
+        //Jeśli odpowiedź jest prawidłowa, rejestracja przeszła pomyślnie, wszystko w api/register jest w porządku, to ustaw user danymi (setUser), które przyszły z api/register (tam dane zostaną przekazane do bazy danych w strapi, a następnie te dane zostaną przekazane tutaj)
+        if (response.ok) {
+            setUser(data.user);
+            //po prawidłowym zarejestrowaniu przekieruj użytkownika w te miejsce
+            router.push('/konto/moje-drinki');
+        }
+        //jeśli natomiast odpowiedź była nieprawidłowa (błędna rejestracja), to ustaw te błędy w zmiennej error za pomocą setError
+        else {
+            if (data.message === "Email is already taken.") {
+                setError("Wpisany adres email jest już zajęty.");
+            }
+            else if (data.message === "Please provide your password.") {
+                setError("Proszę wpisać hasło")
+            }
+            setError(null);
+        }
     }
+
     //Logowanie użytkownika
     //zmiana email na identifier, ponieważ strapi podczas prośby/żądania logowania potrzebuje zmiennej identifier, jest to tak zrobione ponieważ można się zalogować poprzez email, bądź nazwę użytkownika i robiąc email:identifier będzie to oznaczało, że indentifier potrzebny do logowania to będzie email, a email zostanie zmieniony na indenfitifer
     const login = async ({ email: identifier, password }) => {
