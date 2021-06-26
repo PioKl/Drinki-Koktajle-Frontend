@@ -1,4 +1,5 @@
 import {API_URL} from '@/config/index';
+import cookie from 'cookie';
 
 export default async (request, response) => {
     //jeśli żądana metoda to POST wtedy przejdź dalej
@@ -25,6 +26,18 @@ export default async (request, response) => {
 
         //Jeśli dane są prawidłowe to ustaw te dane jako user i te dane, będą odebrane w AuthContext
         if(strapiResponse.ok) {
+            //Ustawienie ciasteczka (cookie) po stronie serwera, potrzebne do jwt (json web token), w celu "przetrzymania danych" zalogowanego w ciasteczkach, żeby po odświeżeniu nadal pozostał zalogowany
+            response.setHeader(
+                'Set-Cookie',
+                cookie.serialize('token', data.jwt, {
+                    httpOnly: true,
+                    secure: process.env.NODE_ENV !== 'development',
+                    maxAge: 60*60*24*7, //1 tydzień
+                    sameSite: 'strict',
+                    path: '/',
+                })
+            )
+
             response.status(200).json({user: data.user});
         } //Jeśli zły login, to przekaż błędną wiadomość (np. zły login, hasło)
         else {
