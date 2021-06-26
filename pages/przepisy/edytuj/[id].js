@@ -6,9 +6,11 @@ import Link from 'next/link';
 import Image from 'next/image';
 import { API_URL } from '@/config/index';
 
-export async function getServerSideProps({ params: { id } }) {
+export async function getServerSideProps({ params: { id }, req }) {
     const res = await fetch(`${API_URL}/drinks/${id}`)
     const drink = await res.json();
+
+    console.log(req.headers.cookie)
 
     return {
         props: {
