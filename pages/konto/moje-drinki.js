@@ -1,6 +1,7 @@
 import { API_URL } from "@/config/index";
 import { parseCookies } from "@/helpers/index";
 import MyDrink from "@/components/MyDrink";
+import router, { useRouter } from "next/router";
 
 //Pobranie wszystkich drinków zalogowanego użytkownika przy pomocy jego tokena
 export async function getServerSideProps({req}) {
@@ -19,15 +20,34 @@ export async function getServerSideProps({req}) {
 
     return {
         props: {
-            drinks
+            drinks,
+            token
         },
     }
 }
 
-export default function MojeDrinki({drinks}) {
-    
-    const deleteDrink = (id) => {
+export default function MojeDrinki({ drinks, token }) {
+
+    const router = useRouter();
+
+    const deleteDrink = async (id) => {
         console.log(id)
+          if (confirm('Na pewno')) {
+            const res = await fetch(`${API_URL}/drinks/${id}`, {
+                method: 'DELETE',
+                headers: {
+                    Authorization: `Bearer ${token}`
+                },
+            })
+
+            const data = await res.json()
+
+            if (!res.ok) {
+                console.log(data.message)
+            } else {
+                router.reload();
+            }
+        }
     }
     return (
         <div>
