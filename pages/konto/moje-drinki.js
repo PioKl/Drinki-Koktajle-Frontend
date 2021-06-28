@@ -1,5 +1,6 @@
 import { API_URL } from "@/config/index";
 import { parseCookies } from "@/helpers/index";
+import MyDrink from "@/components/MyDrink";
 
 //Pobranie wszystkich drinków zalogowanego użytkownika przy pomocy jego tokena
 export async function getServerSideProps({req}) {
@@ -24,10 +25,16 @@ export async function getServerSideProps({req}) {
 }
 
 export default function MojeDrinki({drinks}) {
-    console.log(drinks)
+    
+    const deleteDrink = (id) => {
+        console.log(id)
+    }
     return (
         <div>
-            <h1>Lista Twoich Drinków</h1> 
+            <h1>Lista Twoich Drinków</h1>
+            {drinks.map(drink => (
+                <MyDrink key={drink.id} drink={drink} handleDeleteDrink={deleteDrink} />
+            ))}
         </div>
     )
 }
