@@ -3,8 +3,10 @@ import 'react-toastify/dist/ReactToastify.css';
 import { useState } from 'react';
 import { useRouter } from 'next/router';
 import { API_URL } from '@/config/index';
+import { parseCookies } from '@/helpers/index';
 
-export default function AddDrink() {
+
+export default function AddDrink({ token }) {
 
     const router = useRouter();
 
@@ -214,7 +216,7 @@ export default function AddDrink() {
 
         if (valuesEmpty.nameEmpty === false && valuesEmpty.ingredientsOneAndTwoEmpty === false && valuesEmpty.ingredientsAndMeasuresEmpty1 === false && valuesEmpty.ingredientsAndMeasuresEmpty2 === false && valuesEmpty.ingredientsAndMeasuresEmpty3 === false && valuesEmpty.ingredientsAndMeasuresEmpty4 === false && valuesEmpty.ingredientsAndMeasuresEmpty5 === false && valuesEmpty.ingredientsAndMeasuresEmpty6 === false && valuesEmpty.imageEmpty === false) {
             validation = true;
-            toast.success("Sukces!")
+            //toast.success("Sukces!")
         }
         else {
             return
@@ -236,13 +238,22 @@ export default function AddDrink() {
 
             const res = await fetch(`${API_URL}/drinks`, {
                 method: 'POST',
-                body: formData
+                headers: {
+                    'Authorization': `Bearer ${token}`
+                },
+                body: formData,
             })
+            console.log(token)
+            console.log(res)
 
             //console.log(res)
 
             if (!res.ok) {
-                console.log('Something is wrong')
+                 if(res.status === 403 || res.status === 401) {
+                    toast.error('Brak tokena autoryzacyjnego')
+                    return
+                }
+                toast.error('Coś poszło nie tak :(')
             }
             else {
                 const drink = await res.json()
@@ -359,4 +370,15 @@ export default function AddDrink() {
             </form>
         </div>
     )
+}
+
+//Pobranie wymaganego tokena
+export async function getServerSideProps({req}) {
+    const {token} = parseCookies(req)
+
+    return {
+        props: {
+            token
+        }
+    }
 }
