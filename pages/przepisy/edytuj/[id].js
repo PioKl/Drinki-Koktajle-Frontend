@@ -5,21 +5,22 @@ import { useRouter } from 'next/router';
 import Link from 'next/link';
 import Image from 'next/image';
 import { API_URL } from '@/config/index';
+import { parseCookies } from '@/helpers/index';
 
 export async function getServerSideProps({ params: { id }, req }) {
+    const { token } = parseCookies(req)
     const res = await fetch(`${API_URL}/drinks/${id}`)
     const drink = await res.json();
 
-    console.log(req.headers.cookie)
-
     return {
         props: {
-            drink
+            drink,
+            token
         }
     }
 }
 
-export default function EditDrink({ drink }) {
+export default function EditDrink({ drink, token }) {
 
     const router = useRouter();
 
@@ -210,13 +211,20 @@ export default function EditDrink({ drink }) {
 
             const res = await fetch(`${API_URL}/drinks/${drink.id}`, {
                 method: 'PUT',
+                headers: {
+                    'Authorization': `Bearer ${token}`
+                },
                 body: formData
             })
 
             console.log(res)
 
             if (!res.ok) {
-                console.log('Something is wrong')
+                if (res.status === 403 || res.status === 401) {
+                    toast.error('Brak autoryzacji')
+                    return
+                }
+                toast.error('Coś poszło nie tak :(')
             }
             else {
                 const drink = await res.json()
