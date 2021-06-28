@@ -49,34 +49,10 @@ export default function DrinkDetails({ drink }) {
     }
 
 
-
-    //USUWANIE
-    const handleDeleteDrink = async (e) => {
-        if (confirm('Na pewno')) {
-            const res = await fetch(`${API_URL}/drinks/${drink.id}`, {
-                method: 'DELETE'
-            })
-
-            const data = await res.json()
-
-            if (!res.ok) {
-                console.log(data.message)
-            } else {
-                router.push('/')
-            }
-        }
-    }
-    //console.log(drink.video)
     return (
         <div>
             <Link href="/"><a><button>Strona Główna</button></a></Link>
-            <button onClick={handleDeleteDrink}>Delete</button>
-            <Link href={`/przepisy/edytuj/${drink.id}`}><a><button>Edit</button></a></Link>
             <h1>{drink.name}</h1>
-            {/*             {drink.ingredients.map((ingredient, id) => (
-                <li key={id}>{ingredient}</li>
-            ))} */}
-
             {ingredientList.map((ingredient, id) => ingredient ?
                 <li key={id}>{ingredient}</li> : null
             )}
