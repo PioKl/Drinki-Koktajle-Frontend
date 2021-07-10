@@ -22,12 +22,22 @@ export async function getStaticProps({ params: { slug } }) {
 
     const res = await fetch(`${API_URL}/drinks?slug=${slug}`);
     const drinks = await res.json();
-    return {
-        props: {
-            drink: drinks[0],
-            revalidate: 1,
+    if (!drinks.length) {
+        return {
+            redirect: {
+                destination: '/', //wtedy przekieruj na stronę główną
+                permanent: false,
+            }
         }
+        //czyli podsumowując jeśli nie będzie nic istnieć pod danym linkiem, nie będzie dodany żaden taki drink/koktajl, czyli nie ma takiego adresu, wtedy przekieruj na stronę główną, permanent jest false, bo w przyszłości może być pod tym linkiem jakiś drink
     }
+    else
+        return {
+            props: {
+                drink: drinks[0],
+                revalidate: 1,
+            }
+        }
 }
 
 
@@ -35,6 +45,8 @@ export async function getStaticProps({ params: { slug } }) {
 export default function DrinkDetails({ drink }) {
 
     const router = useRouter();
+
+    if (!drink) return <div>Szukanie Drinka</div>
 
     console.log(drink)
     const { ingredient1, ingredient2, ingredient3, ingredient4, ingredient5, ingredient6, measure1, measure2, measure3, measure4, measure5, measure6, description } = drink;
@@ -47,7 +59,6 @@ export default function DrinkDetails({ drink }) {
         let match = url.match(regExp);
         return (match && match[7].length == 11) ? match[7] : false;
     }
-
 
     return (
         <div>
