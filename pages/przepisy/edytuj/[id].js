@@ -9,18 +9,28 @@ import { parseCookies } from '@/helpers/index';
 
 export async function getServerSideProps({ params: { id }, req }) {
     const { token } = parseCookies(req)
-    const res = await fetch(`${API_URL}/drinks/${id}`)
-    const drink = await res.json();
 
-    return {
-        props: {
-            drink,
-            token
+    try {
+        const res = await fetch(`${API_URL}/drinks/${id}`)
+        const drink = await res.json();
+        return {
+            props: {
+                drink,
+                token: token || null
+            }
+        }
+    } catch {
+        //Nie ma drinka o takim id
+        return {
+            redirect: {
+                destination: '/', //przekieruj na stronę główną
+                permanent: false,
+            }
         }
     }
 }
 
-export default function EditDrink({ drink, token }) {
+export default function EditDrink({ drink, token, empty }) {
 
     const router = useRouter();
 
