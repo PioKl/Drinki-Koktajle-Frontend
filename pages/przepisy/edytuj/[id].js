@@ -22,9 +22,8 @@ export async function getServerSideProps({ params: { id }, req }) {
     } catch {
         //Nie ma drinka o takim id
         return {
-            redirect: {
-                destination: '/', //przekieruj na stronę główną
-                permanent: false,
+            props: {
+                empty: true
             }
         }
     }
@@ -33,6 +32,14 @@ export async function getServerSideProps({ params: { id }, req }) {
 export default function EditDrink({ drink, token, empty }) {
 
     const router = useRouter();
+
+    if (empty) {
+        return (
+            <div>
+                <p>Nie istnieje drink o takim id</p>
+            </div>
+        )
+    }
 
     const toastYoutubeError = "toast-youtube-error";
     const ToastYoutubeError = () => {
@@ -200,7 +207,6 @@ export default function EditDrink({ drink, token, empty }) {
         console.log(youtubeParser(values.video))
         if (valuesEmpty.nameEmpty === false && valuesEmpty.ingredientsAndMeasuresEmpty1 === false && valuesEmpty.ingredientsAndMeasuresEmpty2 === false && valuesEmpty.ingredientsAndMeasuresEmpty3 === false && valuesEmpty.ingredientsAndMeasuresEmpty4 === false && valuesEmpty.ingredientsAndMeasuresEmpty5 === false && valuesEmpty.ingredientsAndMeasuresEmpty6 === false) {
             validation = true;
-            toast.success("Sukces!")
         }
         else {
             return
@@ -234,7 +240,12 @@ export default function EditDrink({ drink, token, empty }) {
                     toast.error('Brak autoryzacji')
                     return
                 }
-                toast.error('Coś poszło nie tak :(')
+                toast.error(
+                    <div>
+                        Coś poszło nie tak :( <br /><br />
+                        Wprowadzona nazwa drinka może być już zajęta
+                    </div>
+                )
             }
             else {
                 const drink = await res.json()
