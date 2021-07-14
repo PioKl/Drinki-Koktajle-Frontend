@@ -24,12 +24,8 @@ export async function getStaticProps({ params: { slug } }) {
     const drinks = await res.json();
     if (!drinks.length) {
         return {
-            redirect: {
-                destination: '/', //wtedy przekieruj na stronę główną
-                permanent: false,
-            }
+            props: {} //puste propsy, w celu pozbycia się błędu
         }
-        //czyli podsumowując jeśli nie będzie nic istnieć pod danym linkiem, nie będzie dodany żaden taki drink/koktajl, czyli nie ma takiego adresu, wtedy przekieruj na stronę główną, permanent jest false, bo w przyszłości może być pod tym linkiem jakiś drink
     }
     else
         return {
@@ -46,7 +42,7 @@ export default function DrinkDetails({ drink }) {
 
     const router = useRouter();
 
-    if (!drink) return <div>Szukanie Drinka</div>
+    if (!drink) return <div>Nie ma takiego drinka</div>
 
     console.log(drink)
     const { ingredient1, ingredient2, ingredient3, ingredient4, ingredient5, ingredient6, measure1, measure2, measure3, measure4, measure5, measure6, description } = drink;
