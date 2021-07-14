@@ -5,6 +5,17 @@ import { useRouter } from 'next/router';
 import { API_URL } from '@/config/index';
 import { parseCookies } from '@/helpers/index';
 
+//Pobranie wymaganego tokena
+export async function getServerSideProps({ req }) {
+    const { token } = parseCookies(req)
+
+    return {
+        props: {
+            token: token || null
+        }
+    }
+}
+
 
 export default function AddDrink({ token }) {
 
@@ -155,7 +166,23 @@ export default function AddDrink({ token }) {
             toast.error("Musisz dodać co najmniej dwa składniki")
 
         }
-        else if (values.ingredient1 !== '' && values.ingredient2 !== '') {
+        else if (values.ingredient1 !== '' && values.ingredient2 === '') {
+            valuesEmpty.ingredientsOneAndTwoEmpty = true;
+            setErrors(prev => ({
+                ...prev,
+                ingredientsOneAndTwo: messages.ingredientsOneAndTwo_empty,
+            }));
+            toast.error("Musisz dodać co najmniej dwa składniki")
+        }
+        else if (values.ingredient1 === '' && values.ingredient2 !== '') {
+            valuesEmpty.ingredientsOneAndTwoEmpty = true;
+            setErrors(prev => ({
+                ...prev,
+                ingredientsOneAndTwo: messages.ingredientsOneAndTwo_empty,
+            }));
+            toast.error("Musisz dodać co najmniej dwa składniki")
+        }
+        else {
             valuesEmpty.ingredientsOneAndTwoEmpty = false;
             setErrors(prev => ({
                 ...prev,
@@ -216,7 +243,6 @@ export default function AddDrink({ token }) {
 
         if (valuesEmpty.nameEmpty === false && valuesEmpty.ingredientsOneAndTwoEmpty === false && valuesEmpty.ingredientsAndMeasuresEmpty1 === false && valuesEmpty.ingredientsAndMeasuresEmpty2 === false && valuesEmpty.ingredientsAndMeasuresEmpty3 === false && valuesEmpty.ingredientsAndMeasuresEmpty4 === false && valuesEmpty.ingredientsAndMeasuresEmpty5 === false && valuesEmpty.ingredientsAndMeasuresEmpty6 === false && valuesEmpty.imageEmpty === false) {
             validation = true;
-            //toast.success("Sukces!")
         }
         else {
             return
@@ -249,11 +275,20 @@ export default function AddDrink({ token }) {
             //console.log(res)
 
             if (!res.ok) {
-                 if(res.status === 403 || res.status === 401) {
-                    toast.error('Brak tokena autoryzacyjnego')
+                if (res.status === 403 || res.status === 401) {
+                    toast.error(
+                        <div>
+                            Brak autoryzacji <br /><br />
+                            Musisz być zalogowany aby dodać drinka
+                        </div>
+                    )
                     return
                 }
-                toast.error('Coś poszło nie tak :(')
+                toast.error(<div>
+                    Coś poszło nie tak :( <br /><br />
+                    Wprowadzona nazwa drinka może być już zajęta
+                </div>
+                )
             }
             else {
                 const drink = await res.json()
@@ -370,15 +405,4 @@ export default function AddDrink({ token }) {
             </form>
         </div>
     )
-}
-
-//Pobranie wymaganego tokena
-export async function getServerSideProps({req}) {
-    const {token} = parseCookies(req)
-
-    return {
-        props: {
-            token: token || null
-        }
-    }
 }
