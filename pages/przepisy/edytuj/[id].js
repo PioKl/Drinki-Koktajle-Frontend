@@ -81,6 +81,7 @@ export default function EditDrink({ drink, token, empty }) {
     let validation = false;
     const [errors, setErrors] = useState({
         name: false,
+        ingredientsOneAndTwo: false,
         ingredientsAndMeasures1: false,
         ingredientsAndMeasures2: false,
         ingredientsAndMeasures3: false,
@@ -90,6 +91,7 @@ export default function EditDrink({ drink, token, empty }) {
     });
     let valuesEmpty = {
         nameEmpty: false,
+        ingredientsOneAndTwoEmpty: false,
         ingredientsAndMeasuresEmpty1: false,
         ingredientsAndMeasuresEmpty2: false,
         ingredientsAndMeasuresEmpty3: false,
@@ -100,7 +102,10 @@ export default function EditDrink({ drink, token, empty }) {
     const messages = {
         name_empty: 'Drink musi mieć nazwę',
         ingredientOrMeasure_empty: 'Składnik musi mieć nazwę i ilość',
+        ingredientsOneAndTwo_empty: ' Drink musi mieć składnik nr 1 i składnik nr 2',
     }
+
+    let wrongYoutubeUrl = false;
 
     const youtubeParser = (url) => {
 
@@ -127,7 +132,10 @@ export default function EditDrink({ drink, token, empty }) {
         }
         //w przeciwnym wypadku zakończ
         else {
-            ToastYoutubeError();
+            if (values.video !== (null || "")) {
+                ToastYoutubeError();
+                wrongYoutubeUrl = true;
+            }
             return
         }
     }
@@ -169,7 +177,40 @@ export default function EditDrink({ drink, token, empty }) {
             }));
         }
 
-        for (let i = 1; i <= Object.keys(valuesEmpty).length - 1; i++) {
+        if (values.ingredient1 === '' && values.ingredient2 === '') {
+            valuesEmpty.ingredientsOneAndTwoEmpty = true;
+            setErrors(prev => ({
+                ...prev,
+                ingredientsOneAndTwo: messages.ingredientsOneAndTwo_empty,
+            }));
+            toast.error("Musisz dodać co najmniej dwa składniki")
+
+        }
+        else if (values.ingredient1 !== '' && values.ingredient2 === '') {
+            valuesEmpty.ingredientsOneAndTwoEmpty = true;
+            setErrors(prev => ({
+                ...prev,
+                ingredientsOneAndTwo: messages.ingredientsOneAndTwo_empty,
+            }));
+            toast.error("Musisz dodać co najmniej dwa składniki")
+        }
+        else if (values.ingredient1 === '' && values.ingredient2 !== '') {
+            valuesEmpty.ingredientsOneAndTwoEmpty = true;
+            setErrors(prev => ({
+                ...prev,
+                ingredientsOneAndTwo: messages.ingredientsOneAndTwo_empty,
+            }));
+            toast.error("Musisz dodać co najmniej dwa składniki")
+        }
+        else {
+            valuesEmpty.ingredientsOneAndTwoEmpty = false;
+            setErrors(prev => ({
+                ...prev,
+                ingredientsOneAndTwo: false,
+            }));
+        }
+
+        for (let i = 1; i <= Object.keys(valuesEmpty).length - 2; i++) {
             console.log(eval(`values.ingredient${i}`))
             console.log(eval(`values.measure${i}`))
             if (eval(`values.ingredient${i}`) === "" && eval(`values.measure${i}`) !== "") {
@@ -205,7 +246,7 @@ export default function EditDrink({ drink, token, empty }) {
         }
 
         console.log(youtubeParser(values.video))
-        if (valuesEmpty.nameEmpty === false && valuesEmpty.ingredientsAndMeasuresEmpty1 === false && valuesEmpty.ingredientsAndMeasuresEmpty2 === false && valuesEmpty.ingredientsAndMeasuresEmpty3 === false && valuesEmpty.ingredientsAndMeasuresEmpty4 === false && valuesEmpty.ingredientsAndMeasuresEmpty5 === false && valuesEmpty.ingredientsAndMeasuresEmpty6 === false) {
+        if (valuesEmpty.nameEmpty === false && valuesEmpty.ingredientsOneAndTwoEmpty === false && valuesEmpty.ingredientsAndMeasuresEmpty1 === false && valuesEmpty.ingredientsAndMeasuresEmpty2 === false && valuesEmpty.ingredientsAndMeasuresEmpty3 === false && valuesEmpty.ingredientsAndMeasuresEmpty4 === false && valuesEmpty.ingredientsAndMeasuresEmpty5 === false && valuesEmpty.ingredientsAndMeasuresEmpty6 === false && wrongYoutubeUrl === false) {
             validation = true;
         }
         else {
@@ -243,7 +284,8 @@ export default function EditDrink({ drink, token, empty }) {
                 toast.error(
                     <div>
                         Coś poszło nie tak :( <br /><br />
-                        Wprowadzona nazwa drinka może być już zajęta
+                        Wprowadzona nazwa drinka może być już zajęta <br /><br />
+                        Zdjęcie może mieć nieprawidłowy format
                     </div>
                 )
             }
@@ -272,6 +314,7 @@ export default function EditDrink({ drink, token, empty }) {
                     <input type="text" id="measure1" name="measure1" value={values.measure1} onChange={handleInputChange} />
                 </div>
                 {errors.ingredientsAndMeasures1 && <span style={{ color: "red" }}>{messages.ingredientOrMeasure_empty}</span>}
+                {errors.ingredientsOneAndTwo && <span style={{ color: "red" }}>{messages.ingredientsOneAndTwo_empty}</span>}
                 <div>
                     <label htmlFor="ingredient2">Składnik nr 2</label>
                     <input type="text" id="ingredient2" name="ingredient2" value={values.ingredient2} onChange={handleInputChange} />
@@ -279,6 +322,7 @@ export default function EditDrink({ drink, token, empty }) {
                     <input type="text" id="measure2" name="measure2" value={values.measure2} onChange={handleInputChange} />
                 </div>
                 {errors.ingredientsAndMeasures2 && <span style={{ color: "red" }}>{messages.ingredientOrMeasure_empty}</span>}
+                {errors.ingredientsOneAndTwo && <span style={{ color: "red" }}>{messages.ingredientsOneAndTwo_empty}</span>}
                 <div>
                     <label htmlFor="ingredient3">Składnik nr 3</label>
                     <input type="text" id="ingredient3" name="ingredient3" value={values.ingredient3} onChange={handleInputChange} />
@@ -331,7 +375,7 @@ export default function EditDrink({ drink, token, empty }) {
                 <div>
                     <h2>Film instruktażowy</h2>
                     <input type="text" id="video" name="video" value={values.video} onChange={handleInputChange} />
-                    {values.video !== null || "" ?
+                    {values.video !== (null || "") ?
                         <div>
                             <iframe src={`https://www.youtube.com/embed/${youtubeParser(values.video)}`} width="500" height="150" target="_parent"></iframe>
                         </div>
