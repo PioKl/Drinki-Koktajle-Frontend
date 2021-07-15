@@ -94,6 +94,7 @@ export default function AddDrink({ token }) {
         ingredientOrMeasure_empty: 'Składnik musi mieć nazwę i ilość',
         image_empty: 'Musisz dodać zdjęcie drinka'
     }
+    let wrongYoutubeUrl = false;
 
     const youtubeParser = (url) => {
 
@@ -117,7 +118,10 @@ export default function AddDrink({ token }) {
         }
         //w przeciwnym wypadku zakończ
         else {
-            ToastYoutubeError();
+            if (values.video !== (null || "")) {
+                ToastYoutubeError();
+                wrongYoutubeUrl = true;
+            }
             return
         }
     }
@@ -241,7 +245,7 @@ export default function AddDrink({ token }) {
             }
         }
 
-        if (valuesEmpty.nameEmpty === false && valuesEmpty.ingredientsOneAndTwoEmpty === false && valuesEmpty.ingredientsAndMeasuresEmpty1 === false && valuesEmpty.ingredientsAndMeasuresEmpty2 === false && valuesEmpty.ingredientsAndMeasuresEmpty3 === false && valuesEmpty.ingredientsAndMeasuresEmpty4 === false && valuesEmpty.ingredientsAndMeasuresEmpty5 === false && valuesEmpty.ingredientsAndMeasuresEmpty6 === false && valuesEmpty.imageEmpty === false) {
+        if (valuesEmpty.nameEmpty === false && valuesEmpty.ingredientsOneAndTwoEmpty === false && valuesEmpty.ingredientsAndMeasuresEmpty1 === false && valuesEmpty.ingredientsAndMeasuresEmpty2 === false && valuesEmpty.ingredientsAndMeasuresEmpty3 === false && valuesEmpty.ingredientsAndMeasuresEmpty4 === false && valuesEmpty.ingredientsAndMeasuresEmpty5 === false && valuesEmpty.ingredientsAndMeasuresEmpty6 === false && valuesEmpty.imageEmpty === false && wrongYoutubeUrl === false) {
             validation = true;
         }
         else {
@@ -286,7 +290,8 @@ export default function AddDrink({ token }) {
                 }
                 toast.error(<div>
                     Coś poszło nie tak :( <br /><br />
-                    Wprowadzona nazwa drinka może być już zajęta
+                    Wprowadzona nazwa drinka może być już zajęta  <br /><br />
+                    Zdjęcie może mieć nieprawidłowy format
                 </div>
                 )
             }
