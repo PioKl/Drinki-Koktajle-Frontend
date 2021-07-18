@@ -66,9 +66,11 @@ export default function AddDrink({ token }) {
 
     //Zmienne potrzebne przy walidacji
     let validation = false;
+    let wrongYoutubeUrl = false;
     const [errors, setErrors] = useState({
         name: false,
         ingredientsOneAndTwo: false,
+        wrongYoutubeUrl: false,
         ingredientsAndMeasures1: false,
         ingredientsAndMeasures2: false,
         ingredientsAndMeasures3: false,
@@ -92,9 +94,9 @@ export default function AddDrink({ token }) {
         name_empty: 'Drink musi mieć nazwę',
         ingredientsOneAndTwo_empty: ' Drink musi mieć składnik nr 1 i składnik nr 2',
         ingredientOrMeasure_empty: 'Składnik musi mieć nazwę i ilość',
-        image_empty: 'Musisz dodać zdjęcie drinka'
+        image_empty: 'Musisz dodać zdjęcie drinka',
+        wrongYoutubeUrl: 'Nieprawidłowy adres url'
     }
-    let wrongYoutubeUrl = false;
 
     const youtubeParser = (url) => {
 
@@ -118,6 +120,7 @@ export default function AddDrink({ token }) {
         }
         //w przeciwnym wypadku zakończ
         else {
+            //jeśli użytkownik wpisał coś niezgdonego z przyjętym parsem, wtedy ustaw zmienna wronYoutubeUrl na true
             if (values.video !== (null || "")) {
                 ToastYoutubeError();
                 wrongYoutubeUrl = true;
@@ -243,6 +246,19 @@ export default function AddDrink({ token }) {
                             ingredientsAndMeasures${i}: false,
                         }))`)
             }
+        }
+
+        if (wrongYoutubeUrl === true) {
+            setErrors(prev => ({
+                ...prev,
+                wrongYoutubeUrl: messages.wrongYoutubeUrl,
+            }));
+        }
+        else {
+            setErrors(prev => ({
+                ...prev,
+                wrongYoutubeUrl: false,
+            }));
         }
 
         if (valuesEmpty.nameEmpty === false && valuesEmpty.ingredientsOneAndTwoEmpty === false && valuesEmpty.ingredientsAndMeasuresEmpty1 === false && valuesEmpty.ingredientsAndMeasuresEmpty2 === false && valuesEmpty.ingredientsAndMeasuresEmpty3 === false && valuesEmpty.ingredientsAndMeasuresEmpty4 === false && valuesEmpty.ingredientsAndMeasuresEmpty5 === false && valuesEmpty.ingredientsAndMeasuresEmpty6 === false && valuesEmpty.imageEmpty === false && wrongYoutubeUrl === false) {
@@ -398,6 +414,7 @@ export default function AddDrink({ token }) {
                     {values.video !== "" ?
                         <div>
                             <iframe src={`https://www.youtube.com/embed/${youtubeParser(values.video)}`} width="500" height="150" target="_parent"></iframe>
+                            {errors.wrongYoutubeUrl && <span style={{ color: "red" }}>{messages.wrongYoutubeUrl}</span>}
                         </div>
                         :
                         <div>
