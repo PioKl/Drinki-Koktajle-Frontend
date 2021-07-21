@@ -261,7 +261,8 @@ export default function EditDrink({ drink, token, empty }) {
         }
 
         console.log(youtubeParser(values.video))
-        if (valuesEmpty.nameEmpty === false && valuesEmpty.ingredientsOneAndTwoEmpty === false && valuesEmpty.ingredientsAndMeasuresEmpty1 === false && valuesEmpty.ingredientsAndMeasuresEmpty2 === false && valuesEmpty.ingredientsAndMeasuresEmpty3 === false && valuesEmpty.ingredientsAndMeasuresEmpty4 === false && valuesEmpty.ingredientsAndMeasuresEmpty5 === false && valuesEmpty.ingredientsAndMeasuresEmpty6 === false && wrongYoutubeUrl === false) {
+        //Jeśli wszystkie poniższe wartości są false, wtedy wszystko jest w porządku, walidacja zostaje ustawiona na true
+        if (!valuesEmpty.nameEmpty && !valuesEmpty.ingredientsOneAndTwoEmpty && !valuesEmpty.ingredientsAndMeasuresEmpty1 && !valuesEmpty.ingredientsAndMeasuresEmpty2 && !valuesEmpty.ingredientsAndMeasuresEmpty3 && !valuesEmpty.ingredientsAndMeasuresEmpty4 && !valuesEmpty.ingredientsAndMeasuresEmpty5 && !valuesEmpty.ingredientsAndMeasuresEmpty6 && !wrongYoutubeUrl) {
             validation = true;
         }
         else {
