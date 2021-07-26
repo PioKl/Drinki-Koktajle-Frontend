@@ -1,7 +1,7 @@
 import { API_URL } from "@/config/index";
 import Link from "next/link";
 import DrinkCard from "@/components/DrinkCard";
-import { useState } from 'react';
+import { useState, useRef } from 'react';
 import Select from 'react-select';
 
 
@@ -19,9 +19,34 @@ export default function Home({ drinks }) {
 
   const [value, setValue] = useState("");
 
-  const handleChange = (e) => {
+  const handleSearchChange = (e) => {
     console.log(e.target.value)
     setValue(e.target.value);
+  }
+
+  /*==================================================================================================================================
+                                                Podpowiedzi przy wyszukiwaniu
+  ===================================================================================================================================*/
+  //Refernecja, która będzie potrzebna do ustawienia focusa i blura w search input
+  const searchInput = useRef(null);
+
+  //Ustalanie stanu podpowiedzi, czy mają się wyświetlać, czy nie
+  const [tips, setTips] = useState(false);
+
+  const handleSearchClick = () => {
+    setTips(!tips);
+  }
+  const handleShowTipsClick = () => {
+    setTips(!tips);
+  }
+  const handleSelectedTipClick = (e) => {
+    setValue(e.currentTarget.getAttribute('value'))
+    setTips(!tips);
+    searchInput.current.focus();
+  }
+  const handleSelectedFiltersMenuOpen = () => {
+    setTips(false);
+    searchInput.current.blur();
   }
 
   /*==================================================================================================================================
@@ -61,7 +86,7 @@ export default function Home({ drinks }) {
   const [selectedFilters, setSelectedFilters] = useState([]);
 
   //przekazywanie do tablicy selectedFilters wybranych filtrów
-  const handleChangeSelectedFilters = (e) => {
+  const handleSelectedFiltersChange = (e) => {
     setSelectedFilters(Array.isArray(e) ? e.map(x => x.value) : []);
   }
   /*================================================================================================================================= */
@@ -112,13 +137,22 @@ export default function Home({ drinks }) {
         placeholder="Szukaj po składnikach"
         value={options.filter(obj => selectedFilters.includes(obj.value))} // ustawia wartości (filtry) wybrane przez użytkownika (ustawi je dodatkowo alfabetycznie)
         options={options} // opcje (filtry) do wyboru
-        onChange={handleChangeSelectedFilters}
+        onMenuOpen={handleSelectedFiltersMenuOpen}
+        onChange={handleSelectedFiltersChange}
         isMulti
         noOptionsMessage={() => 'Nie ma więcej filtrów'}
       />
-      <input type="text" value={value} onChange={handleChange} />
+      <input ref={searchInput} type="text" value={value} onChange={handleSearchChange} onClick={handleSearchClick} />
+      <button onClick={handleShowTipsClick}>Show Tips Placeholder</button>
+      {tips &&
+        <ul>
+          {filteredDrinksSearch.map(drink => (
+            <li onClick={handleSelectedTipClick} key={drink.id} value={drink.name.charAt(0).toUpperCase() + drink.name.slice(1)}>{drink.name.charAt(0).toUpperCase() + drink.name.slice(1)}</li>
+          ))}
+        </ul>
+      }
       <h1>Main Page</h1>
-      {drinks.length === 0 && <h1>Nie ma drinków</h1>}
+      {filteredDrinksSearch.length === 0 && <h1>Nie ma drinków</h1>}
       {filteredDrinksSearch.map(drink => (
         <DrinkCard key={drink.id} drink={drink} />
       ))}
