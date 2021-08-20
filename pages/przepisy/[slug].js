@@ -60,6 +60,7 @@ export default function DrinkDetails({ drink }) {
         <div>
             <Link href="/"><a><button>Strona Główna</button></a></Link>
             <h1>{drink.name}</h1>
+            {drink.user && <h2>Created by {drink.user.username}</h2>}
             {ingredientList.map((ingredient, id) => ingredient ?
                 <li key={id}>{ingredient}</li> : null
             )}
