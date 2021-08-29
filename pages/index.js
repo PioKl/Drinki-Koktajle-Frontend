@@ -4,6 +4,11 @@ import DrinkCard from "@/components/DrinkCard";
 import { useState, useRef } from 'react';
 import Select from 'react-select';
 
+import styles from '../styles/MainPage.module.scss';
+import Logo from '../icons/logo.svg';
+import SearchMagnifier from '../icons/searchIcon.svg';
+import MenuIcon from '../icons/menuIcon.svg';
+
 
 export async function getStaticProps() {
   const res = await fetch(`${API_URL}/drinks`);
@@ -129,7 +134,51 @@ export default function Home({ drinks }) {
 
 
   return (
-    <div>
+    <>
+      <div className={styles.container}>
+        <nav className={styles.navigation}>
+          <div className={styles.logoContainer}>
+            <Logo viewBox="0 0 23 38" className={`${styles.logoContainer__logo} ${styles.icon}`} />
+            <h1 className={styles.logoContainer__logoName}>Drink Share</h1>
+          </div>
+          <div className={styles.menu}>
+            <SearchMagnifier viewBox="0 0 20 20" className={styles.menu__search} />
+            <MenuIcon viewBox="0 0 20 12" className={styles.menu__mainMenu} />
+          </div>
+
+
+        </nav>
+        {/*        <Link href="/przepisy/dodaj-drinka">
+          <button>Dodaj Drinka</button>
+        </Link> */}
+        <Select id="long-value-select" instanceId="long-value-select"
+          placeholder="Szukaj po składnikach"
+          value={options.filter(obj => selectedFilters.includes(obj.value))} // ustawia wartości (filtry) wybrane przez użytkownika (ustawi je dodatkowo alfabetycznie)
+          options={options} // opcje (filtry) do wyboru
+          onMenuOpen={handleSelectedFiltersMenuOpen}
+          onChange={handleSelectedFiltersChange}
+          isMulti
+          noOptionsMessage={() => 'Nie ma więcej filtrów'}
+        />
+        <input ref={searchInput} type="text" value={value} onChange={handleSearchChange} onClick={handleSearchClick} />
+        <button onClick={handleShowTipsClick}>Show Tips Placeholder</button>
+        {tips &&
+          <ul>
+            {filteredDrinksSearch.map(drink => (
+              <li onClick={handleSelectedTipClick} key={drink.id} value={drink.name.charAt(0).toUpperCase() + drink.name.slice(1)}>{drink.name.charAt(0).toUpperCase() + drink.name.slice(1)}</li>
+            ))}
+          </ul>
+        }
+        <h1>Main Page</h1>
+        {filteredDrinksSearch.length === 0 && <h1>Nie ma drinków</h1>}
+        {filteredDrinksSearch.map(drink => (
+          <DrinkCard key={drink.id} drink={drink} />
+        ))}
+      </div>
+
+
+
+      {/* <div className={styles.sprawdz}>
       <Link href="/przepisy/dodaj-drinka">
         <button>Dodaj Drinka</button>
       </Link>
@@ -156,6 +205,7 @@ export default function Home({ drinks }) {
       {filteredDrinksSearch.map(drink => (
         <DrinkCard key={drink.id} drink={drink} />
       ))}
-    </div>
+    </div> */}
+    </>
   )
 }
