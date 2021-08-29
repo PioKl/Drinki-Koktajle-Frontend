@@ -1,0 +1,53 @@
+@import './Mixins.scss';
+@import './Fonts.scss';
+@import './Colors.scss';
+
+.container {
+    //background-color: yellow;
+    font-family: $fontRasa;
+    padding: 30px 19px;
+}
+
+.navigation {
+    position: relative;
+    display: flex;
+    align-items: center;
+    //background-color: green;
+    //height: 26px;
+    justify-content: space-between;
+}
+
+.logoContainer {
+    display: flex;
+    align-items: center;
+
+    &__logo {
+        position: relative;
+        bottom: 8px;
+        margin-right: 22px;
+
+    }
+
+    &__logoName {
+        position: relative;
+        font-size: 28px;
+        font-style: normal;
+        font-weight: 400;
+    }
+}
+
+.menu {
+    display: flex;
+    align-items: center;
+
+    &__mainMenu {
+        margin-left: 22px;
+
+        /*         width: 20px;
+        height: 10px; */
+        /*         &:hover {
+            filter: invert(60%) sepia(40%) saturate(3716%) hue-rotate(324deg) brightness(104%) contrast(101%);
+            filter: invert(56%) sepia(76%) saturate(440%) hue-rotate(130deg) brightness(93%) contrast(99%);
+        } */
+    }
+}
