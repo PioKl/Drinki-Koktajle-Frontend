@@ -1,0 +1,106 @@
+@mixin absoluteCenter {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+}
+
+@mixin flex-spaceBetweenCenter {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+
+
+/* Box */
+@mixin box($width, $height: $width) {
+    width: $width;
+    height: $height;
+}
+
+/* ===== Usage ===== */
+/* div {
+    // You can pass width && height
+    @include box(200px, 300px);
+    //or just pass width and the height
+    //will default to the width value
+    @include box(200px);
+  } */
+
+/* Flexbox Toolkit */
+@mixin flex-column {
+    display: flex;
+    flex-direction: column;
+}
+
+@mixin flex-center {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+@mixin flex-center-column {
+    @include flex-center;
+    flex-direction: column;
+}
+
+@mixin flex-center-vert {
+    display: flex;
+    align-items: center;
+}
+
+@mixin flex-center-horiz {
+    display: flex;
+    justify-content: center;
+}
+
+/* ===== Usage ===== */
+/* .vertical-centered-element {
+    @include flex-center-vert;
+}
+.horizontally-centered-element {
+    flex-direction: column;
+    @include flex-center-vert;
+} */
+
+
+
+/* Cover Background */
+@mixin cover-background {
+    background-repeat: no-repeat;
+    background-size: cover;
+    background-position: center;
+}
+
+/* ===== Usage ===== */
+/* div {
+    background-image: url("cute-doggo.png");
+    @include cover-background;
+} */
+
+/* Pseudo */
+
+@mixin pseudo($width: 100%,
+    $height: 100%,
+    $display: inline-block,
+    $pos: absolute,
+    $content: ""
+
+) {
+    content: $content;
+    display: $display;
+    position: $pos;
+    @include box($width, $height);
+}
+
+
+/* ===== Usage ===== */
+/* div {
+    position: relative;
+    width: 200px;
+    height: 200px;
+    &:after {
+        @include pseudo(100px, 100px);
+    }
+} */
