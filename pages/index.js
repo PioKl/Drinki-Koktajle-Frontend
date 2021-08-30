@@ -7,7 +7,10 @@ import Select from 'react-select';
 import styles from '../styles/MainPage.module.scss';
 import Logo from '../icons/logo.svg';
 import SearchMagnifier from '../icons/searchIcon.svg';
-import MenuIcon from '../icons/menuIcon.svg';
+import Menu from '../icons/menuIcon.svg';
+import FilterIcon from '../icons/filterIcon.svg';
+import FilterFillIcon from '../icons/filterFillIcon.svg';
+import Close from '../icons/closeIcon.svg';
 
 
 export async function getStaticProps() {
@@ -132,34 +135,66 @@ export default function Home({ drinks }) {
   console.log(filteredDrinksSearch);
   console.log(selectedFilters)
 
+  /*==================================================================================================================================
+                                          Stan wyświetlenia panelu wyszukiwania i panelu filtrów 
+===================================================================================================================================*/
+  const [showSearchPanel, setShowSearchPanel] = useState(true);
+  const [showFiltersPanel, setShowFiltersPanel] = useState(true);
+  /*================================================================================================================================= */
+
 
   return (
     <>
       <div className={styles.container}>
         <nav className={styles.navigation}>
-          <div className={styles.logoContainer}>
-            <Logo viewBox="0 0 23 38" className={`${styles.logoContainer__logo} ${styles.icon}`} />
-            <h1 className={styles.logoContainer__logoName}>Drink Share</h1>
+          <div className={styles.navigation__logoAndMenuContainer}>
+            <div className={`${styles.logoContainer} ${showSearchPanel && styles['logoContainer--disableContainer']}`}>
+              <Logo viewBox="0 0 23 38" className={`${styles.logoContainer__logo} ${styles.icon}`} />
+              <h1 className={styles.logoContainer__logoName}>Drink Share</h1>
+            </div>
+            <div className={`${styles.menuContainer} ${showSearchPanel && styles['menuContainer--searchOpened']}`}>
+              <SearchMagnifier onClick={() => setShowSearchPanel(true)} viewBox="0 0 20 20" className={styles.menuContainer__searchIcon} />
+              {showSearchPanel ?
+                <>
+                  <input ref={searchInput} type="text" spellCheck="false" value={value} onChange={handleSearchChange} onClick={handleSearchClick} className={styles.menuContainer__searchInput} />
+                  <Close onClick={() => { setShowSearchPanel(false); setValue("") }} viewBox="0 0 16 16" className={styles.menuContainer__closeSearch} />
+                </>
+                :
+                <Menu viewBox="0 0 20 12" className={styles.menuContainer__mainMenu} />
+              }
+            </div>
           </div>
-          <div className={styles.menu}>
-            <SearchMagnifier viewBox="0 0 20 20" className={styles.menu__search} />
-            <MenuIcon viewBox="0 0 20 12" className={styles.menu__mainMenu} />
+          <div className={styles.toggleFiltersContainer}>
+
+            {showFiltersPanel ?
+              <FilterFillIcon onClick={() => setShowFiltersPanel(!showFiltersPanel)} viewBox="0 0 16 16" className={styles.toggleFiltersContainer__filterIcon} />
+              :
+              <div onClick={() => setShowFiltersPanel(!showFiltersPanel)} className={styles.toggleFiltersContainer__informationAndIconContainer}>
+                <p className={styles.toggleFiltersContainer__information}>Filtry</p>
+                <FilterIcon viewBox="0 0 16 16" className={styles.toggleFiltersContainer__filterIcon} />
+              </div>
+            }
           </div>
-
-
+          {showFiltersPanel &&
+            <div className={`${styles.filtersContainer}`}>
+              <Select id="long-value-select" instanceId="long-value-select"
+                //className={`${styles['react-select-container']}`}
+                className='react-select-container'
+                classNamePrefix='react-select'
+                placeholder="Szukaj po składnikach"
+                value={options.filter(obj => selectedFilters.includes(obj.value))} // ustawia wartości (filtry) wybrane przez użytkownika (ustawi je dodatkowo alfabetycznie)
+                options={options} // opcje (filtry) do wyboru
+                onMenuOpen={handleSelectedFiltersMenuOpen}
+                onChange={handleSelectedFiltersChange}
+                isMulti
+                noOptionsMessage={() => 'Nie ma więcej filtrów'}
+              />
+            </div>
+          }
         </nav>
         {/*        <Link href="/przepisy/dodaj-drinka">
           <button>Dodaj Drinka</button>
         </Link> */}
-        <Select id="long-value-select" instanceId="long-value-select"
-          placeholder="Szukaj po składnikach"
-          value={options.filter(obj => selectedFilters.includes(obj.value))} // ustawia wartości (filtry) wybrane przez użytkownika (ustawi je dodatkowo alfabetycznie)
-          options={options} // opcje (filtry) do wyboru
-          onMenuOpen={handleSelectedFiltersMenuOpen}
-          onChange={handleSelectedFiltersChange}
-          isMulti
-          noOptionsMessage={() => 'Nie ma więcej filtrów'}
-        />
         <input ref={searchInput} type="text" value={value} onChange={handleSearchChange} onClick={handleSearchClick} />
         <button onClick={handleShowTipsClick}>Show Tips Placeholder</button>
         {tips &&
