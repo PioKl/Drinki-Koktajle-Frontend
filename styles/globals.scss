@@ -50,13 +50,90 @@ body {
   margin: 0;
   background-repeat: no-repeat;
   background-attachment: fixed;
+  //position: fixed; //- wyelminowanie bialego miejsca na dole strony podczas przewijania na telefonie overflow: auto;
   overflow: auto;
   color: white;
 }
 
+
 div#root {
   height: 100%;
 }
+
+
+.react-select-container {
+  font-family: $fontOpenSans;
+  font-style: normal;
+  font-weight: 400;
+  font-size: 16px;
+  line-height: 24px;
+}
+
+.react-select__value-container {
+  padding-left: 0 !important;
+}
+
+.react-select__placeholder {
+  color: white !important;
+}
+
+.react-select__control {
+  background: none !important;
+  border: none !important;
+  border-radius: 0 !important;
+  border-bottom: 1px solid white !important;
+}
+
+.react-select__multi-value {
+  background-color: $orange !important;
+  color: white !important;
+}
+
+.react-select__multi-value__label {
+  color: white !important;
+  font-family: $fontOpenSans;
+  font-weight: 400;
+  /*   font-size: 9px !important;
+  line-height: 12px !important; */
+  /*   width: 56.32px;
+  height: 18.32px; */
+}
+
+.react-select__multi-value__remove {
+  cursor: pointer;
+}
+
+.react-select__indicator {
+  color: white !important;
+  cursor: pointer;
+}
+
+.react-select__indicator-separator {
+  background-color: white !important;
+}
+
+.react-select__dropdown-indicator {
+  padding-right: 0 !important;
+}
+
+.react-select__menu {
+  border: 1px solid white;
+  background: $backgroundColor !important;
+}
+
+.react-select__option {
+  cursor: pointer !important;
+
+  &--is-focused {
+    background-color: $orange !important;
+  }
+
+  &:hover {
+    background-color: $orange !important;
+  }
+
+}
+
 
 /* html,
 body,
