@@ -1,0 +1,50 @@
+@import './Mixins.scss';
+@import './Colors.scss';
+
+.main {
+    @include flex-column();
+    flex-grow: 1;
+
+    &__scrollBackToTop {
+        all: unset;
+        position: fixed;
+        z-index: 1;
+        display: grid;
+        place-items: center;
+        cursor: pointer;
+        width: 6vh;
+        height: 6vh;
+        bottom: 1vh;
+        right: .1rem;
+        border-radius: 50%;
+        background-color: $orange;
+        visibility: hidden;
+        opacity: 0;
+        animation: showButton 1s forwards;
+
+        @include universalLandscape {
+            width: 2.5vw;
+            height: 2.5vw;
+            right: 1.9rem;
+            bottom: 1vw;
+        }
+
+        &:before {
+            content: "\f062";
+            font-family: "Font Awesome 5 Free";
+            font-weight: 600;
+            font-size: 2.5vh;
+
+            @include universalLandscape {
+                font-size: 1.2vw;
+            }
+        }
+    }
+
+    @keyframes showButton {
+        100% {
+            opacity: 1;
+            visibility: visible;
+        }
+    }
+}

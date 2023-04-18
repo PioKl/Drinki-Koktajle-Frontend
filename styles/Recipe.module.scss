@@ -1,0 +1,422 @@
+@import './Mixins.scss';
+@import './Fonts.scss';
+@import './Colors.scss';
+@import './Resolutions.scss';
+
+
+/* Zmienne */
+
+$recipeUniversalSpace: 2.3rem;
+
+.drinkNameContainer {
+    margin: 2.3rem 0;
+    font-family: $fontRasa;
+    text-align: center;
+
+    &__heading {
+        font-size: calc(25px + .96vw);
+        &::first-letter {
+            color: $orange;
+        }
+
+        @media screen and (min-width: $laptop) {
+            font-size: calc(20px + .96vw);
+        }
+    }
+}
+.recipeContainer {
+    display: grid;
+    grid-template-columns: 1fr;
+    grid-template-rows: auto;
+    grid-template-areas: 
+    "recipeImageSection"
+    "recipeIngrdientsAndInformationSection"
+    "recipeVideoSection";
+    padding: 0px 50px;
+
+    @media (min-width: $laptop) {
+        position: relative;
+        top: 25%;
+        transform: translateY(-25%);
+        padding-bottom: 5rem;
+        grid-template-columns: repeat(2, 1fr);
+        grid-template-areas: "recipeImageSection recipeIngrdientsAndInformationSection";
+    }
+}
+
+
+.recipeMediaContainer {
+    grid-area: recipeImageSection;
+    margin-bottom: $recipeUniversalSpace;
+    font-family: $fontKalam;
+    text-align: center;
+    
+    &__mediaButtons {
+        display: none;
+    }
+
+    @media screen and (min-width: $laptop) {
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+
+        width: 40rem;
+        height: 40rem;
+        margin: 0 auto;
+        margin-bottom: 0;
+    
+        &__mediaButtons {
+            display: flex;
+            margin-left: auto;
+        }
+
+        &__mediaButton {
+            cursor: pointer;
+            color: white;
+            border: 2px solid black;
+            border-radius: 5px;
+            border-bottom-left-radius: 0;
+            border-bottom-right-radius: 0;
+            padding: .5rem 1rem;
+
+            background-color: rgba(0, 0, 0, 0.178);
+            border-bottom: 0;
+            font-family: $fontKalam;           
+
+            &--image {
+                border-top-right-radius: 0;
+            }
+
+            &--video {
+                border-top-left-radius: 0;
+            }
+
+            &--active {
+                border-color: transparent;
+                background-color: black;
+            }
+        }
+    }
+
+    @include desktopLandscape() {
+        @include width-heightLandscape(desktop, 30, 68);
+    }
+    
+
+    &__author {
+        font-size: calc(10px + .62vw);
+        @media screen and (min-width: $laptop) {
+            display: none;
+        }
+    }
+
+    &__media {
+
+        background-color: black;
+        
+        @media screen and (min-width: $laptop) {
+            border: .3rem solid black;    
+        }  
+
+        &--withVideo {
+            border-radius: .5rem;
+
+            @media screen and (min-width: $laptop) {
+                border-top-right-radius: 0;
+            }
+        }
+
+        &--onlyImg {
+            border-radius: .5rem;
+            border: none;
+        }
+
+
+        &--img {
+            width: 100%;
+    
+            @media screen and (min-width: $laptop) {
+                height: 100%;
+            }  
+        }
+
+        &--iframeContainer {
+            position: relative;
+            width: inherit;
+            height: inherit;
+            border-radius: .5rem;
+            border-top-right-radius: 0;
+        }
+    }
+    &__iframe {
+        position: absolute;
+        top: 0;
+        left:0;
+        width: 100%;
+        height: 100%;
+        object-fit: cover;
+
+        @media screen and (min-width: $laptop) {
+            border: none;
+        }
+
+    }
+}
+
+.recipeIngrdientsAndInformationContainer {
+    @media screen and (min-width: $laptop) {
+        @include flex-column;
+
+        padding: $recipeUniversalSpace 0;
+        box-shadow: rgba(0, 0, 0, 0.25) 0px 54px 55px, rgba(0, 0, 0, 0.12) 0px -12px 30px, rgba(0, 0, 0, 0.12) 0px 4px 6px, rgba(0, 0, 0, 0.17) 0px 12px 13px, rgba(0, 0, 0, 0.09) 0px -3px 5px;
+        border-radius: .5rem; 
+    }
+
+    @include desktopMediumLandscape() {
+        @include paddingLandscape(desktopMedium, 2.3, 6, 0, 0);
+    }
+}
+
+.recipeIngredientsContainer {
+    position: relative;
+    z-index: 1;
+    grid-area: recipeIngredientsSection;
+    font-family: $fontKalam;
+    padding-bottom: $recipeUniversalSpace;
+    margin-bottom: $recipeUniversalSpace;
+    
+    @media screen and (min-width: $laptop) {
+        display: flex;
+        flex-direction: column;
+        padding: 0 5rem;
+        padding-bottom: 0;
+        margin-bottom: 0;
+    }
+
+    &--shadow {
+        &:before {
+            content: '';
+            display: block;
+            width: 100vw;
+            height: 100%;
+            position: absolute;
+            top:0;
+            left:50%;
+            transform: translateX(-50%);
+            z-index: -1;
+            border-radius: 100% 0% 100% 0% / 0% 73% 27% 100%;;
+            box-shadow: rgba(0, 0, 0, 0.2) 0px 60px 40px -7px;
+
+            @media screen and (min-width: $laptop) {
+                content: none;
+            }
+        }
+    }
+
+    &__heading {
+        margin-bottom: 1.3rem;
+        font-size: calc(20px + .96vw);
+        text-decoration: underline;
+        text-decoration-color: $orange ;
+
+        @media screen and (min-width: $laptop) {
+            font-size: calc(20px + .66vw);
+        }
+
+        &::first-letter {
+            color: $orange;
+        }
+    }
+
+    &__ingredientsAndMeasuresLists {
+        display: flex;   
+    }
+
+    &__itemList {
+        font-size: calc(14px + .62vw);
+
+        @media screen and (min-width: $laptop) {
+            font-size: calc(10px + .4vw);
+            text-align: left;
+        }
+    }
+
+
+    &__item {
+        list-style-type: disc;
+        list-style-position: inside;
+        &::marker {
+            color: $orange;
+        }
+        &--measure {
+            list-style: none;
+        }
+        @media screen and (min-width: $laptop) {
+            padding-bottom: 2rem;
+        }
+    }
+
+    &__ingredientsList {
+        margin-right: 1.6rem;
+
+        @media screen and (min-width: $laptop) {
+            margin-right: 5rem;
+        }
+    }
+}
+
+.recipeInformationsContainer {
+    position: relative;
+    z-index: 1;
+    grid-area: recipeInformationsSection;
+    padding-bottom: $recipeUniversalSpace;
+    margin-bottom: $recipeUniversalSpace;
+    font-family: $fontKalam;
+
+    @media screen and (min-width: $laptop) {
+        padding: 0 5rem;
+        margin-bottom: $recipeUniversalSpace;
+    }
+
+
+    &--shadow {
+
+        &:before {
+            content: '';
+            display: block;
+            width: 100vw;
+            height: 100%;
+            position: absolute;
+            top:0;
+            left:50%;
+            transform: translateX(-50%);
+            z-index: -1;
+            border-radius: 100% 0% 100% 0% / 0% 73% 27% 100%;
+            box-shadow: rgba(0, 0, 0, 0.25) 0px 25px 50px -12px;
+    
+            @media screen and (min-width: $laptop) {
+                content: none;
+            }
+        }
+    }
+
+    &__heading {
+        font-size: calc(20px + .96vw);
+        margin-bottom: 1.3rem;
+        text-decoration: underline;
+        text-decoration-color: $orange ;
+
+        &::first-letter {
+            color: $orange;
+        }
+
+        @media screen and (min-width: $laptop) {
+            font-size: calc(20px + .66vw);
+        }
+    }
+    &__descriptionTitle {
+        color: $orange;
+    }
+    &__description {
+        font-size: calc(14px + .62vw);
+        @media screen and (min-width: $laptop) {
+            font-size: calc(10px + .4vw);
+        }
+        &:before {
+            content: "\f059";
+            font-family: "Font Awesome 5 Free";
+            font-size: calc(14px + .62vw);
+            font-weight: 900;
+            color: $orange;
+            position: relative;
+            margin-right: .5rem;
+            bottom: .25px;
+
+            @media screen and (min-width: $laptop) {
+                font-size: calc(10px + .37vw); 
+            }
+        }
+    }
+}
+
+.recipeAuthor {
+    display: none;
+    font-family: $fontKalam;
+    @media screen and (min-width: $laptop) {
+        display: grid;
+        padding: 0 5rem; 
+        margin-top: auto;
+    }
+    &__heading {
+        @media screen and (min-width: $laptop) {
+            font-size: calc(10px + .62vw);
+            
+            &::first-letter {
+                color: $orange;
+            }
+        }
+    }
+}
+
+
+.recipeVideoContainer {
+    grid-area: recipeVideoSection;
+    margin-bottom: 3rem;
+
+    @media screen and (min-width: $laptop) {
+        display: none;
+        margin-top: 6rem;
+        margin-bottom: 6rem;
+    }
+
+    &__heading {
+        font-size: calc(20px + .96vw);
+        font-family: $fontKalam;
+        text-decoration: underline;
+        text-decoration-color: $orange ;
+        &::first-letter {
+            color: $orange;
+        }
+
+        @media screen and (min-width: $laptop) {
+           text-align: center;
+           margin-bottom: 3rem;
+        }
+    }
+}
+
+.recipeIframeContainer {
+    position: relative;
+    margin-top: $recipeUniversalSpace;
+    margin-bottom: $recipeUniversalSpace;
+    aspect-ratio: 16/9;
+
+    @media screen and (min-width: $laptop) {
+        width: 50%;
+        margin: 0 auto;
+        aspect-ratio: 16/9;
+    }
+    &__iframe {
+        position: absolute;
+        top: 0;
+        left:0;
+        width: 100%;
+        height: 100%;
+        object-fit: cover;
+    };
+}
+
+
+.wrongRecipe {
+    font-family: $fontRasa;
+    width: 100%;
+    padding: 3rem 1.9rem;
+    text-align: center;
+    @include absoluteCenter();
+
+    &__title {
+        font-weight: 400;
+        font-size: 5.64vh;
+        line-height: 6.87vh;
+    }
+}

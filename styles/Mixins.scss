@@ -1,3 +1,125 @@
+@import './Resolutions.scss';
+
+
+/* MEDIA QUERIES */
+
+
+@mixin universalLandscape {
+    @media (min-width: #{$laptop}) and (orientation: landscape) {
+        @content;
+    }
+}
+
+@mixin laptopToDesktopLandscape {
+    @media (min-width: #{$laptop}) and (max-width: #{$desktop}) and (orientation: landscape) {
+        @content;
+    }
+}
+
+@mixin desktopLandscape {
+    @media (min-width: #{$desktop}) and (orientation: landscape) {
+        @content;
+    }
+}
+
+@mixin desktopMediumLandscape {
+    @media (min-width: #{$desktopMedium}) and (orientation: landscape) {
+        @content;
+    }
+}
+
+
+/* =====================================================================================================================================
+                                                        Portrait Mixins 
+======================================================================================================================================*/
+
+@mixin font-sizePortrait($min, $max) {
+    font-size: calc(#{$min}rem + (((100vw - #{$mobile/1em*1.6rem}) / (#{$laptop/1em * 1.6} - #{$mobile/1em * 1.6}))) * (#{$max} - #{$min}));
+}
+
+@mixin max-widthPortrait($min, $max) {
+    max-width: calc(#{$min}rem + (((100vw - #{$mobile/1em*1.6rem}) / (#{$laptop/1em * 1.6} - #{$mobile/1em * 1.6}))) * (#{$max} - #{$min}));
+}
+/* =====================================================================================================================================
+                                                        Landscape Mixins 
+======================================================================================================================================*/
+
+
+/* $laptop: 61.1875em; //979px
+$desktop: 75em; //1200px
+$desktopMedium: 96em; // 1536px
+$desktopLarge: 160em; // 2560px */
+
+
+@mixin font-sizeLandscape($min, $max) {
+        font-size: calc(#{$min}rem + (((100vw - #{$laptop/1em*1.6rem}) / (#{$desktopLarge/1em * 1.6} - #{$laptop/1em * 1.6}))) * (#{$max} - #{$min}));
+}
+
+
+
+@mixin width-heightLandscape($size, $min, $max) {
+
+    @if($size==universalDesktop) {
+        width: calc(#{$min}rem + (((100vw - #{$laptop/1em*1.6rem}) / (#{$desktopLarge/1em * 1.6} - #{$laptop/1em * 1.6}))) * (#{$max} - #{$min}));
+        height: calc(#{$min}rem + (((100vw - #{$laptop/1em*1.6rem}) / (#{$desktopLarge/1em * 1.6} - #{$laptop/1em * 1.6}))) * (#{$max} - #{$min}));
+    }
+
+    @else if($size==laptopToDesktop) {
+        width: calc(#{$min}rem + (((100vw - #{$laptop/1em*1.6rem}) / (#{$desktop/1em * 1.6} - #{$laptop/1em * 1.6}))) * (#{$max} - #{$min}));
+        height: calc(#{$min}rem + (((100vw - #{$laptop/1em*1.6rem}) / (#{$desktop/1em * 1.6} - #{$laptop/1em * 1.6}))) * (#{$max} - #{$min}));
+    }
+
+    @else if($size==desktop) {
+        width: calc(#{$min}rem + (((100vw - #{$desktop/1em*1.6rem}) / (#{$desktopLarge/1em * 1.6} - #{$desktop/1em * 1.6}))) * (#{$max} - #{$min}));
+        height: calc(#{$min}rem + (((100vw - #{$desktop/1em*1.6rem}) / (#{$desktopLarge/1em * 1.6} - #{$desktop/1em * 1.6}))) * (#{$max} - #{$min}));
+    }
+
+    @else if ($size==desktopMedium) {
+        width: calc(#{$min}rem + (((100vw - #{$desktopMedium/1em*1.6rem}) / (#{$desktopLarge/1em * 1.6} - #{$desktopMedium/1em * 1.6}))) * (#{$max} - #{$min}));
+        height: calc(#{$min}rem + (((100vw - #{$desktopMedium/1em*1.6rem}) / (#{$desktopLarge/1em * 1.6} - #{$desktopMedium/1em * 1.6}))) * (#{$max} - #{$min}));
+    }
+}
+
+
+@mixin paddingLandscape($size, $minTopBottom, $maxTopBottom, $minLeftRight, $maxLeftRight) {
+    padding: calc(#{$minTopBottom}rem + (((100vw - #{$laptop/1em*1.6rem}) / (#{$desktopLarge/1em * 1.6} - #{$laptop/1em * 1.6}))) * (#{$maxTopBottom} - #{$minTopBottom})) calc(#{$minLeftRight}rem + (((100vw - #{$laptop/1em*1.6rem}) / (#{$desktopLarge/1em * 1.6} - #{$laptop/1em * 1.6}))) * (#{$maxLeftRight} - #{$minLeftRight}));
+
+
+    @if($size==universalDesktop) {
+        padding: calc(#{$minTopBottom}rem + (((100vw - #{$laptop/1em*1.6rem}) / (#{$desktopLarge/1em * 1.6} - #{$laptop/1em * 1.6}))) * (#{$maxTopBottom} - #{$minTopBottom})) calc(#{$minLeftRight}rem + (((100vw - #{$laptop/1em*1.6rem}) / (#{$desktopLarge/1em * 1.6} - #{$laptop/1em * 1.6}))) * (#{$maxLeftRight} - #{$minLeftRight}));
+    }
+
+    @else if($size==laptopToDesktop) {
+        padding: calc(#{$minTopBottom}rem + (((100vw - #{$laptop/1em*1.6rem}) / (#{$desktop/1em * 1.6} - #{$laptop/1em * 1.6}))) * (#{$maxTopBottom} - #{$minTopBottom})) calc(#{$minLeftRight}rem + (((100vw - #{$laptop/1em*1.6rem}) / (#{$desktop/1em * 1.6} - #{$laptop/1em * 1.6}))) * (#{$maxLeftRight} - #{$minLeftRight}));
+    }
+
+
+    @else if($size==desktop) {
+        padding: calc(#{$minTopBottom}rem + (((100vw - #{$desktop/1em*1.6rem}) / (#{$desktopLarge/1em * 1.6} - #{$desktop/1em * 1.6}))) * (#{$maxTopBottom} - #{$minTopBottom})) calc(#{$minLeftRight}rem + (((100vw - #{$desktop/1em*1.6rem}) / (#{$desktopLarge/1em * 1.6} - #{$desktop/1em * 1.6}))) * (#{$maxLeftRight} - #{$minLeftRight}));
+    }
+
+    @else if($size==desktopMedium) {
+        padding: calc(#{$minTopBottom}rem + (((100vw - #{$desktopMedium/1em*1.6rem}) / (#{$desktopLarge/1em * 1.6} - #{$desktopMedium/1em * 1.6}))) * (#{$maxTopBottom} - #{$minTopBottom})) calc(#{$minLeftRight}rem + (((100vw - #{$desktopMedium/1em*1.6rem}) / (#{$desktopLarge/1em * 1.6} - #{$desktopMedium/1em * 1.6}))) * (#{$maxLeftRight} - #{$minLeftRight}));
+    }
+}
+
+
+@mixin margin-bottomLandscape($size, $min, $max) {
+
+    @if($size==universalDesktop) {
+        margin-bottom: calc(#{$min}rem + (((100vw - #{$laptop/1em*1.6rem}) / (#{$desktopLarge/1em * 1.6} - #{$laptop/1em * 1.6}))) * (#{$max} - #{$min}));
+    }
+
+    @else if($size==desktop) {
+        margin-bottom: calc(#{$min}rem + (((100vw - #{$desktop/1em*1.6rem}) / (#{$desktopLarge/1em * 1.6} - #{$desktop/1em * 1.6}))) * (#{$max} - #{$min}));
+    }
+
+    @else if ($size==desktopMedium) {
+        margin-bottom: calc(#{$min}rem + (((100vw - #{$desktopMedium/1em*1.6rem}) / (#{$desktopLarge/1em * 1.6} - #{$desktopMedium/1em * 1.6}))) * (#{$max} - #{$min}));
+    }
+}
+
+
 @mixin absoluteCenter {
     position: absolute;
     top: 50%;
@@ -104,3 +226,71 @@
         @include pseudo(100px, 100px);
     }
 } */
+
+/*Fonts Sizes Mixins*/
+
+@mixin mainHeadingFontSize {
+    font-weight: 600;
+    font-size: clamp(1.7rem, 3.5vh, 4.5rem); 
+
+    @include font-sizePortrait(2.9, 3.8);
+    
+    @include universalLandscape() {
+        @include font-sizeLandscape(3.5, 3.8);
+    }
+}
+
+/* Buttons Mixins */
+
+@mixin buttonHoverEffect {
+    background:
+    linear-gradient(darken( $orange, 10% ) 0 0) left  /var(--d, 0%) 100% no-repeat,
+    linear-gradient(darken( $orange, 10% ) 0 0) right /var(--d, 0%) 100% no-repeat;
+    transition: 0.5s;
+    background-color: $orange;
+
+
+    &:hover {
+        --d: 100%;
+        background-color: darken($orange, 10% );
+    }
+}
+
+
+/* Animations */
+
+@mixin loader {
+    display: flex;
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+     span {
+        display: inline-block;
+        width: 2rem;
+        height: 2rem;
+        margin: 0 .5rem;
+        background-color: $orange;
+        border-radius: 50%;
+        animation-name : dots;
+        animation-duration: 2s;
+        animation-iteration-count: infinite;
+        animation-timing-function: ease-in-out;
+
+        &:nth-child(2) {
+            background-color: darken($color: $orange, $amount: 1);
+            animation-delay: .4s;
+         }
+        &:nth-child(3) {
+            background-color: darken($color: $orange, $amount: 3);
+            animation-delay: .8s;
+        }
+     }
+
+     @keyframes dots {
+        50% {
+            opacity: 0;
+            transform: scale(.7) translateY(10px);
+        }
+     }
+}

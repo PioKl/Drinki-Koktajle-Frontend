@@ -1,9 +1,10 @@
 import { ToastContainer, toast } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { useRouter } from 'next/router';
 import { API_URL } from '@/config/index';
 import { parseCookies } from '@/helpers/index';
+import styles from '../../styles/Forms.module.scss';
 
 //Pobranie wymaganego tokena
 export async function getServerSideProps({ req }) {
@@ -20,6 +21,13 @@ export async function getServerSideProps({ req }) {
 export default function AddDrink({ token }) {
 
     const router = useRouter();
+
+    //Jeśli użytkownik nie jest zalogowany to przekierwoanie na stronę logowania
+    useEffect(() => {
+        if (token === null) {
+            router.push("/konto/zaloguj");
+        }
+    }, []);
 
     const toastYoutubeError = "toast-youtube-error";
     const toastYoutubeSuccess = "toast-youtube-success";
@@ -47,6 +55,7 @@ export default function AddDrink({ token }) {
     const [values, setValues] = useState({
         name: '',
         description: '',
+        author: '',
         ingredient1: '',
         ingredient2: '',
         ingredient3: '',
@@ -92,8 +101,8 @@ export default function AddDrink({ token }) {
     }
     const messages = {
         name_empty: 'Drink musi mieć nazwę',
-        ingredientsOneAndTwo_empty: ' Drink musi mieć składnik nr 1 i składnik nr 2',
-        ingredientOrMeasure_empty: 'Składnik musi mieć nazwę i ilość',
+        ingredientsOneAndTwo_empty: ' Drink musi mieć składnik nr 1 i składnik nr 2.',
+        ingredientOrMeasure_empty: 'Składnik musi mieć nazwę i ilość.',
         image_empty: 'Musisz dodać zdjęcie drinka',
         wrongYoutubeUrl: 'Nieprawidłowy adres url'
     }
@@ -131,14 +140,11 @@ export default function AddDrink({ token }) {
 
     const handleInputChange = (e) => {
         e.preventDefault();
-        const { name, value } = e.target
-        //console.log(e.target.name)
-        //console.log(e.target.value)
+        const { name, value } = e.target;
         setValues({ ...values, [name]: value });
     }
 
     const handleFileChange = (e) => {
-        console.log(e.target.files[0])
         setImage({
             preview: URL.createObjectURL(e.target.files[0]),
             file: e.target.files[0]
@@ -214,8 +220,6 @@ export default function AddDrink({ token }) {
         }
 
         for (let i = 1; i <= Object.keys(valuesEmpty).length - 3; i++) {
-            console.log(eval(`values.ingredient${i}`))
-            console.log(eval(`values.measure${i}`))
             if (eval(`values.ingredient${i}`) === "" && eval(`values.measure${i}`) !== "") {
                 eval(`valuesEmpty.ingredientsAndMeasuresEmpty${i} = true`);
                 eval(`setErrors(prev => ({
@@ -262,7 +266,7 @@ export default function AddDrink({ token }) {
         }
 
         //Jeśli wszystkie poniższe wartości są false, wtedy wszystko jest w porządku, walidacja zostaje ustawiona na true
-        if (!valuesEmpty.nameEmpty && !valuesEmpty.ingredientsOneAndTwoEmpty && !valuesEmpty.ingredientsAndMeasuresEmpty1 && !valuesEmpty.ingredientsAndMeasuresEmpty2 && !valuesEmpty.ingredientsAndMeasuresEmpty3 && !valuesEmpty.ingredientsAndMeasuresEmpty4 && !valuesEmpty.ingredientsAndMeasuresEmpty5 && !valuesEmpty.ingredientsAndMeasuresEmpty6 === false && !valuesEmpty.imageEmpty && !wrongYoutubeUrl) {
+        if (!valuesEmpty.nameEmpty && !valuesEmpty.ingredientsOneAndTwoEmpty && !valuesEmpty.ingredientsAndMeasuresEmpty1 && !valuesEmpty.ingredientsAndMeasuresEmpty2 && !valuesEmpty.ingredientsAndMeasuresEmpty3 && !valuesEmpty.ingredientsAndMeasuresEmpty4 && !valuesEmpty.ingredientsAndMeasuresEmpty5 && !valuesEmpty.ingredientsAndMeasuresEmpty6 && !valuesEmpty.imageEmpty && !wrongYoutubeUrl) {
             validation = true;
         }
         else {
@@ -271,7 +275,6 @@ export default function AddDrink({ token }) {
     }
 
     const handleSubmit = async e => {
-
         e.preventDefault();
 
         formValidation();
@@ -289,11 +292,7 @@ export default function AddDrink({ token }) {
                     'Authorization': `Bearer ${token}`
                 },
                 body: formData,
-            })
-            console.log(token)
-            console.log(res)
-
-            //console.log(res)
+            });
 
             if (!res.ok) {
                 if (res.status === 403 || res.status === 401) {
@@ -314,10 +313,10 @@ export default function AddDrink({ token }) {
             }
             else {
                 const drink = await res.json()
-                //console.log(drink)
                 setValues({
                     name: '',
                     description: '',
+                    author: '',
                     ingredient1: '',
                     ingredient2: '',
                     ingredient3: '',
@@ -340,92 +339,175 @@ export default function AddDrink({ token }) {
     }
 
     return (
-        <div>
-            <h1>Add Drink</h1>
-            <ToastContainer />
-            <form onSubmit={handleSubmit}>
-                <div>
-                    <label htmlFor="name">Nazwa drinka</label>
-                    <input type="text" id="name" name="name" value={values.name} onChange={handleInputChange} />
-                </div>
-                {errors.name && <span style={{ color: "red" }}>{messages.name_empty}</span>}
-                <div>
-                    <label htmlFor="ingredient1">Składnik nr 1</label>
-                    <input type="text" id="ingredient1" name="ingredient1" value={values.ingredient1} onChange={handleInputChange} />
-                    <label htmlFor="measure1">Ilość składnika nr 1</label>
-                    <input type="text" id="measure1" name="measure1" value={values.measure1} onChange={handleInputChange} />
-                </div>
-                {errors.ingredientsAndMeasures1 && <span style={{ color: "red" }}>{messages.ingredientOrMeasure_empty}</span>}
-                {errors.ingredientsOneAndTwo && <span style={{ color: "red" }}>{messages.ingredientsOneAndTwo_empty}</span>}
-                <div>
-                    <label htmlFor="ingredient2">Składnik nr 2</label>
-                    <input type="text" id="ingredient2" name="ingredient2" value={values.ingredient2} onChange={handleInputChange} />
-                    <label htmlFor="measure2">Ilość składnika nr 2</label>
-                    <input type="text" id="measure2" name="measure2" value={values.measure2} onChange={handleInputChange} />
-                </div>
-                {errors.ingredientsAndMeasures2 && <span style={{ color: "red" }}>{messages.ingredientOrMeasure_empty}</span>}
-                {errors.ingredientsOneAndTwo && <span style={{ color: "red" }}>{messages.ingredientsOneAndTwo_empty}</span>}
-                <div>
-                    <label htmlFor="ingredient3">Składnik nr 3</label>
-                    <input type="text" id="ingredient3" name="ingredient3" value={values.ingredient3} onChange={handleInputChange} />
-                    <label htmlFor="measure3">Ilość składnika nr 3</label>
-                    <input type="text" id="measure3" name="measure3" value={values.measure3} onChange={handleInputChange} />
-                </div>
-                {errors.ingredientsAndMeasures3 && <span style={{ color: "red" }}>{messages.ingredientOrMeasure_empty}</span>}
-                <div>
-                    <label htmlFor="ingredient3">Składnik nr 4</label>
-                    <input type="text" id="ingredient4" name="ingredient4" value={values.ingredient4} onChange={handleInputChange} />
-                    <label htmlFor="measure4">Ilość składnika nr 4</label>
-                    <input type="text" id="measure4" name="measure4" value={values.measure4} onChange={handleInputChange} />
-                </div>
-                {errors.ingredientsAndMeasures4 && <span style={{ color: "red" }}>{messages.ingredientOrMeasure_empty}</span>}
-                <div>
-                    <label htmlFor="ingredient5">Składnik nr 5</label>
-                    <input type="text" id="ingredient5" name="ingredient5" value={values.ingredient5} onChange={handleInputChange} />
-                    <label htmlFor="measure5">Ilość składnika nr 5</label>
-                    <input type="text" id="measure5" name="measure5" value={values.measure5} onChange={handleInputChange} />
-                </div>
-                {errors.ingredientsAndMeasures5 && <span style={{ color: "red" }}>{messages.ingredientOrMeasure_empty}</span>}
-                <div>
-                    <label htmlFor="ingredient6">Składnik nr 6</label>
-                    <input type="text" id="ingredient6" name="ingredient6" value={values.ingredient6} onChange={handleInputChange} />
-                    <label htmlFor="measure6">Ilość składnika nr 6</label>
-                    <input type="text" id="measure6" name="measure6" value={values.measure6} onChange={handleInputChange} />
-                </div>
-                {errors.ingredientsAndMeasures6 && <span style={{ color: "red" }}>{messages.ingredientOrMeasure_empty}</span>}
-                <div>
-                    <label htmlFor="description">Opis</label>
-                    <textarea type="text" name="description" id="description" value={values.description} onChange={handleInputChange}></textarea>
-                </div>
-                <div>
-                    <input type="file" onChange={handleFileChange} />
-                </div>
-                {image.preview !== null ?
-                    <div>
-                        <img src={image.preview} width="200px" height="200px" alt="" />
-                    </div>
-                    :
-                    <div>
-                        {errors.image && <span style={{ color: "red" }}>{messages.image_empty}</span>}
-                    </div>
-                }
-                <div>
-                    <h2>Film instruktażowy</h2>
-                    <input type="text" id="video" name="video" value={values.video} onChange={handleInputChange} />
-                    {values.video !== "" ?
-                        <div>
-                            <iframe src={`https://www.youtube.com/embed/${youtubeParser(values.video)}`} width="500" height="150" target="_parent"></iframe>
-                            {errors.wrongYoutubeUrl && <span style={{ color: "red" }}>{messages.wrongYoutubeUrl}</span>}
-                        </div>
-                        :
-                        <div>
-                            <h2>Nie ma filmu</h2>
-                        </div>
-                    }
-                </div>
+        <>
+            {token !== null &&
+                <>
+                    <ToastContainer />
+                    <div className={`${styles.formContainer}  ${styles['formContainer--drinkCreation']}`}>
+                        <h1 className={styles.formContainer__heading}>Dodaj drinka</h1>
+                        <form onSubmit={handleSubmit}>
+                            <div className={styles.formContainer__creationFormField}>
+                                <label className={`${styles.formContainer__creationLabel} ${styles['formContainer__creationLabel--required']}`} htmlFor="name">Nazwa drinka</label>
+                                <input className={styles.formContainer__creationInput} type="text" id="name" name="name" value={values.name} onChange={handleInputChange} />
+                                {errors.name &&
+                                    <div className={styles.formContainer__errors}>
+                                        {errors.name && <span style={{ color: "red" }}>{messages.name_empty}</span>}
+                                    </div>
+                                }
+                            </div>
+                            <div className={`${styles.formContainer__creationFormField} ${styles['formContainer__creationFormField--ingredientsAndMeasuresContainer']}`}>
+                                <div className={styles.formContainer__ingredientsContainer}>
+                                    <label className={`${styles.formContainer__creationLabel} ${styles['formContainer__creationLabel--required']}`} htmlFor="ingredient1">Składnik nr 1</label>
+                                    <input className={styles.formContainer__creationInput} type="text" id="ingredient1" name="ingredient1" value={values.ingredient1} onChange={handleInputChange} />
+                                </div>
+                                <div className={styles.formContainer__measuresContainer}>
+                                    <label className={`${styles.formContainer__creationLabel} ${styles['formContainer__creationLabel--required']}`} htmlFor="measure1">Ilość składnika nr 1</label>
+                                    <input className={styles.formContainer__creationInput} type="text" id="measure1" name="measure1" value={values.measure1} onChange={handleInputChange} />
+                                </div>
+                                {(errors.ingredientsAndMeasures1 || errors.ingredientsOneAndTwo) &&
+                                    <div className={`${styles.formContainer__errors} ${styles['formContainer__errors--ingredientsAndMeasures']}`}>
+                                        {errors.ingredientsAndMeasures1 && <span style={{ color: "red" }}>{messages.ingredientOrMeasure_empty}</span>}
+                                        {errors.ingredientsOneAndTwo && <span style={{ color: "red" }}>{messages.ingredientsOneAndTwo_empty}</span>}
+                                    </div>
+                                }
+                            </div>
 
-                <input type="submit" value="Dodaj Drinka" />
-            </form>
-        </div>
+                            <div className={`${styles.formContainer__creationFormField} ${styles['formContainer__creationFormField--ingredientsAndMeasuresContainer']}`}>
+                                <div className={styles.formContainer__ingredientsContainer}>
+                                    <label className={`${styles.formContainer__creationLabel} ${styles['formContainer__creationLabel--required']}`} htmlFor="ingredient2">Składnik nr 2</label>
+                                    <input className={styles.formContainer__creationInput} type="text" id="ingredient2" name="ingredient2" value={values.ingredient2} onChange={handleInputChange} />
+                                </div>
+
+                                <div className={styles.formContainer__measuresContainer}>
+                                    <label className={`${styles.formContainer__creationLabel} ${styles['formContainer__creationLabel--required']}`} htmlFor="measure2">Ilość składnika nr 2</label>
+                                    <input className={styles.formContainer__creationInput} type="text" id="measure2" name="measure2" value={values.measure2} onChange={handleInputChange} />
+                                </div>
+
+                                {(errors.ingredientsAndMeasures2 || errors.ingredientsOneAndTwo) &&
+                                    <div className={`${styles.formContainer__errors} ${styles['formContainer__errors--ingredientsAndMeasures']}`}>
+                                        {errors.ingredientsAndMeasures2 && <span style={{ color: "red" }}>{messages.ingredientOrMeasure_empty}</span>}
+                                        {errors.ingredientsOneAndTwo && <span style={{ color: "red" }}>{messages.ingredientsOneAndTwo_empty}</span>}
+                                    </div>
+                                }
+                            </div>
+
+                            {(values.ingredient1 && values.measure1 && values.ingredient2 && values.measure2) &&
+                                <div className={`${styles.formContainer__creationFormField} ${styles['formContainer__creationFormField--ingredientsAndMeasuresContainer']}`}>
+                                    <div className={styles.formContainer__ingredientsContainer}>
+                                        <label className={styles.formContainer__creationLabel} htmlFor="ingredient3">Składnik nr 3</label>
+                                        <input className={styles.formContainer__creationInput} type="text" id="ingredient3" name="ingredient3" value={values.ingredient3} onChange={handleInputChange} />
+                                    </div>
+                                    <div className={styles.formContainer__measuresContainer}>
+                                        <label className={styles.formContainer__creationLabel} htmlFor="measure3">Ilość składnika nr 3</label>
+                                        <input className={styles.formContainer__creationInput} type="text" id="measure3" name="measure3" value={values.measure3} onChange={handleInputChange} />
+                                    </div>
+                                    {errors.ingredientsAndMeasures3 &&
+                                        <div className={`${styles.formContainer__errors} ${styles['formContainer__errors--ingredientsAndMeasures']}`}>
+                                            {errors.ingredientsAndMeasures3 && <span style={{ color: "red" }}>{messages.ingredientOrMeasure_empty}</span>}
+                                        </div>
+                                    }
+                                </div>
+                            }
+
+                            {(values.ingredient1 && values.measure1 && values.ingredient2 && values.measure2 && values.ingredient3 && values.measure3) &&
+                                <div className={`${styles.formContainer__creationFormField} ${styles['formContainer__creationFormField--ingredientsAndMeasuresContainer']}`}>
+                                    <div className={styles.formContainer__ingredientsContainer}>
+                                        <label className={styles.formContainer__creationLabel} htmlFor="ingredient3">Składnik nr 4</label>
+                                        <input className={styles.formContainer__creationInput} type="text" id="ingredient4" name="ingredient4" value={values.ingredient4} onChange={handleInputChange} />
+                                    </div>
+                                    <div className={styles.formContainer__measuresContainer}>
+                                        <label className={styles.formContainer__creationLabel} htmlFor="measure4">Ilość składnika nr 4</label>
+                                        <input className={styles.formContainer__creationInput} type="text" id="measure4" name="measure4" value={values.measure4} onChange={handleInputChange} />
+                                    </div>
+                                    {errors.ingredientsAndMeasures4 &&
+                                        <div className={`${styles.formContainer__errors} ${styles['formContainer__errors--ingredientsAndMeasures']}`}>
+                                            {errors.ingredientsAndMeasures4 && <span style={{ color: "red" }}>{messages.ingredientOrMeasure_empty}</span>}
+                                        </div>
+                                    }
+                                </div>
+                            }
+
+                            {(values.ingredient1 && values.measure1 && values.ingredient2 && values.measure2 && values.ingredient3 && values.measure3 && values.ingredient4 && values.measure4) &&
+                                <div className={`${styles.formContainer__creationFormField} ${styles['formContainer__creationFormField--ingredientsAndMeasuresContainer']}`}>
+                                    <div className={styles.formContainer__ingredientsContainer}>
+                                        <label className={styles.formContainer__creationLabel} htmlFor="ingredient5">Składnik nr 5</label>
+                                        <input className={styles.formContainer__creationInput} type="text" id="ingredient5" name="ingredient5" value={values.ingredient5} onChange={handleInputChange} />
+                                    </div>
+                                    <div className={styles.formContainer__measuresContainer}>
+                                        <label className={styles.formContainer__creationLabel} htmlFor="measure5">Ilość składnika nr 5</label>
+                                        <input className={styles.formContainer__creationInput} type="text" id="measure5" name="measure5" value={values.measure5} onChange={handleInputChange} />
+                                    </div>
+                                    {errors.ingredientsAndMeasures5 &&
+                                        <div className={`${styles.formContainer__errors} ${styles['formContainer__errors--ingredientsAndMeasures']}`}>
+                                            {errors.ingredientsAndMeasures5 && <span style={{ color: "red" }}>{messages.ingredientOrMeasure_empty}</span>}
+                                        </div>
+                                    }
+                                </div>
+                            }
+
+                            {(values.ingredient1 && values.measure1 && values.ingredient2 && values.measure2 && values.ingredient3 && values.measure3 && values.ingredient4 && values.measure4 && values.ingredient5 && values.measure5) &&
+
+                                <div className={`${styles.formContainer__creationFormField} ${styles['formContainer__creationFormField--ingredientsAndMeasuresContainer']}`}>
+                                    <div className={styles.formContainer__ingredientsContainer}>
+                                        <label className={styles.formContainer__creationLabel} htmlFor="ingredient6">Składnik nr 6</label>
+                                        <input className={styles.formContainer__creationInput} type="text" id="ingredient6" name="ingredient6" value={values.ingredient6} onChange={handleInputChange} />
+                                    </div>
+                                    <div className={styles.formContainer__measuresContainer}>
+                                        <label className={styles.formContainer__creationLabel} htmlFor="measure6">Ilość składnika nr 6</label>
+                                        <input className={styles.formContainer__creationInput} type="text" id="measure6" name="measure6" value={values.measure6} onChange={handleInputChange} />
+                                    </div>
+                                    {errors.ingredientsAndMeasures6 &&
+                                        <div className={`${styles.formContainer__errors} ${styles['formContainer__errors--ingredientsAndMeasures']}`}>
+                                            {errors.ingredientsAndMeasures6 && <span style={{ color: "red" }}>{messages.ingredientOrMeasure_empty}</span>}
+                                        </div>
+                                    }
+                                </div>
+                            }
+
+                            <div className={styles.formContainer__creationFormField}>
+                                <label className={styles.formContainer__creationLabel} htmlFor="description">Opis</label>
+                                <textarea className={styles.formContainer__creationInput} type="text" name="description" id="description" value={values.description} onChange={handleInputChange}></textarea>
+                            </div>
+
+                            <div className={styles.formContainer__creationFormField}>
+                                <label className={styles.formContainer__creationLabel} htmlFor="author">Źródło <span className={styles.formContainer__creationBrackets}>(wpisz autora, bądź nazwę strony, jeśli drink został dodany na podstawie czyjegoś przepisu)</span></label>
+                                <input className={styles.formContainer__creationInput} type="text" name="author" id="author" value={values.author} onChange={handleInputChange}/>
+                            </div>
+
+                            <div className={styles.formContainer__creationFormField}>
+                                <label className={`${styles.formContainer__creationLabel} ${styles['formContainer__creationLabel--required']}`} htmlFor="file">Zdjęcie drinka</label>
+                                <input type="file" name="file" id="file" onChange={handleFileChange} />
+                                {image.preview !== null ?
+                                    <div className={styles.formContainer__imgPreview}>
+                                        <img src={image.preview} width="200px" height="200px" alt="Zdjęcie drinka" />
+                                    </div>
+                                    :
+                                    <>
+                                        {errors.image &&
+                                            <div className={styles.formContainer__errors}>
+                                                {errors.image && <span style={{ color: "red" }}>{messages.image_empty}</span>}
+                                            </div>
+                                        }
+                                    </>
+                                }
+                            </div>
+
+                            <div className={styles.formContainer__creationFormField}>
+                                <label className={styles.formContainer__creationLabel} htmlFor="video">Film instruktażowy</label>
+                                <input className={styles.formContainer__creationInput} type="text" id="video" name="video" placeholder='Link do filmu na youtube' value={values.video} onChange={handleInputChange} />
+
+                                {values.video !== "" &&
+                                    <div className={styles.formContainer__iframe}>
+                                        <iframe src={`https://www.youtube.com/embed/${youtubeParser(values.video)}`} width="500" height="500" target="_parent"></iframe>
+                                        {errors.wrongYoutubeUrl && <span style={{ color: "red" }}>{messages.wrongYoutubeUrl}</span>}
+                                    </div>
+                                }
+                            </div>
+                            <button className={`${styles.formContainer__button} ${styles['formContainer__button--drinkCreation']}`} type="submit">Dodaj Drinka</button>
+                        </form>
+                    </div>
+                </>
+            }
+        </>
     )
 }

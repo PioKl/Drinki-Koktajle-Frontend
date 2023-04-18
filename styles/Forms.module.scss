@@ -1,0 +1,267 @@
+@import './Mixins.scss';
+@import './Fonts.scss';
+@import './Colors.scss';
+@import './Resolutions.scss';
+
+.wrongEditId {
+    @include absoluteCenter();
+    width: 100%;
+    text-align: center;
+
+    h2 {
+        padding: 0rem 1.9rem;
+        font-family: $fontRasa;
+        font-style: normal;
+        font-weight: normal;
+        @include font-sizePortrait(2.7, 3.5);
+    
+        @include universalLandscape() {
+            @include font-sizeLandscape(3.4, 3.7);
+        }
+    }
+}
+.forms {
+    margin: 2.3rem 2rem;
+
+    @include universalLandscape() {
+        position: relative;
+        z-index: 1;
+        margin: 0;
+        top: 25%;
+        left: 50%;
+        transform: translate(-50%, -25%);
+    }
+}
+.formContainer {
+    position: relative;
+    z-index: 1;
+    box-shadow: rgba(0, 0, 0, 0.25) 0px 54px 55px, rgba(0, 0, 0, 0.12) 0px -12px 30px, rgba(0, 0, 0, 0.12) 0px 4px 6px, rgba(0, 0, 0, 0.17) 0px 12px 13px, rgba(0, 0, 0, 0.09) 0px -3px 5px;
+    border-radius: .5rem; 
+    @include max-widthPortrait(28.5, 50);
+    font-family: $fontRasa;
+    background: $backgroundColor;
+    padding: 3rem;
+    left: 50%;
+    transform: translateX(-50%);
+
+    @include universalLandscape() {
+        max-width: 50rem;
+        top: 25%;
+        left: 50%;
+        transform: translate(-50%, -25%);
+        margin: 0;
+    }
+
+    &--drinkCreation {
+        top: 0;
+        left: 0;
+        transform: translate(0, 0);
+        margin: 2.3rem 2rem;
+        max-width: initial;
+
+        @include universalLandscape() {
+            margin: 2.3rem auto;
+            max-width: 60rem;
+        }
+    }
+
+    &__heading {
+        &::first-letter {
+            color: $orange;
+        }
+        margin-bottom: 3rem;
+        text-align: center;
+        @include mainHeadingFontSize;
+    }
+
+    &__formField {
+        position: relative;
+        margin-bottom: 3rem;
+    }
+
+    &__label {
+        position: absolute;
+        display: none;
+        inset: 0px;
+        z-index: 1;
+    }
+
+    &__input {
+        padding: 1.5rem;
+        font-size: calc(16px + .62vw);
+        width: 100%;
+        font-family: inherit;
+        border: none;
+        border-radius: 5px;
+
+        @include universalLandscape() {
+            font-size: calc(10px + .4vw);
+        }
+    }
+
+    &__button {
+        cursor: pointer;
+        position: relative;
+        padding: 1.5rem;
+        font-size: calc(16px + .62vw);
+        font-family: inherit;
+        width: 100%;
+        margin-bottom: 3rem;
+        color: white;
+        text-transform: uppercase;
+        border: none;
+        border-radius: 5px;
+
+        @include buttonHoverEffect();
+
+        @include universalLandscape() {
+            font-size: calc(10px + .4vw);
+        }
+
+        &--drinkCreation {
+            margin-bottom: 0;
+        }
+    }
+
+    &__linkContainer {
+        font-size: calc(16px + .62vw);
+
+        @include universalLandscape() {
+            font-size: calc(10px + .4vw);
+        }
+    }
+
+    &__link {
+        background:
+        linear-gradient($orange 0 0) bottom /var(--d, 0) .10vw no-repeat;
+        transition: 0.5s;
+
+        &:hover {
+            --d: 100%;
+        }
+    }
+
+    &__creationFormField {
+        display: flex;
+        flex-direction: column;
+        margin-bottom: 3rem;
+        font-size: calc(16px + .62vw);
+
+        @include universalLandscape() {
+            font-size: calc(10px + .4vw);
+        } 
+
+        &--ingredientsAndMeasuresContainer {
+
+            @include universalLandscape() {
+                display: grid;
+                grid-template-columns: repeat(2, 1fr);
+                grid-template-areas: 'ingredients measures' 'errors errors';
+                grid-column-gap: 5rem;
+            }
+        }
+
+        textarea {
+            min-height: 10rem;
+        }
+    }
+
+    &__ingredientsContainer {
+
+        @include universalLandscape() {
+            grid-area: ingredients; 
+        }
+    }
+
+    &__measuresContainer {
+
+        @include universalLandscape() {
+            grid-area: measures;
+        }
+    }
+
+    &__errors,
+    &__imgPreview,
+    &__iframe {
+         margin-top: 1rem;
+    }
+
+    &__errors {
+
+        &--ingredientsAndMeasures {
+            @include universalLandscape() {
+               grid-area: errors; 
+            }
+            
+        }
+    }
+
+    &__ingredientsContainer,
+    &__measuresContainer {
+        display: grid;
+        margin-bottom: 1.5rem;
+
+        @include universalLandscape() {
+            margin-bottom: 0;
+        }
+    }
+
+    &__creationLabel {
+        margin-bottom: .5rem;
+
+        &--required {
+            &:after {
+                content: '*';
+                color:red;
+                margin-left: .5rem;
+            }  
+        }
+
+    }
+
+    &__creationBrackets {
+        font-size: calc(10px + .12vw);
+    }
+
+    &__creationInput {
+        width: 100%;
+        font-size: inherit;
+        font-family: inherit;
+        padding: .5rem 2rem;
+        border-radius: 5px;
+        border: none;
+    }
+
+    &__iframe {
+        position: relative;
+        padding-top: 56.25%;
+        aspect-ratio: 16 / 9;
+        iframe {
+            position: absolute;
+            top: 0;
+            left:0;
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+        }
+    }
+
+    &__editButtonContainer {
+        display: grid;
+        grid-template-columns: 1fr;
+        grid-column-gap: 4rem;
+        grid-row-gap: 2rem;
+        /* Odwrócenie kolejności */
+        grid-auto-flow: dense;
+        direction: rtl;
+
+        @media (min-width: 450px) {
+            grid-template-columns: repeat(2, 1fr);
+        }
+    }
+
+    &__loginAddinationalInfo {
+        font-size: 16px;
+        margin-top: 1rem;
+    }
+}

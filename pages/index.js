@@ -1,16 +1,10 @@
 import { API_URL } from "@/config/index";
-import Link from "next/link";
 import DrinkCard from "@/components/DrinkCard";
-import { useState, useRef } from 'react';
+import { useState, useEffect } from 'react';
 import Select from 'react-select';
 
 import styles from '../styles/MainPage.module.scss';
-import Logo from '../icons/logo.svg';
 import SearchMagnifier from '../icons/searchIcon.svg';
-import Menu from '../icons/menuIcon.svg';
-import FilterIcon from '../icons/filterIcon.svg';
-import FilterFillIcon from '../icons/filterFillIcon.svg';
-import Close from '../icons/closeIcon.svg';
 
 
 export async function getStaticProps() {
@@ -25,37 +19,8 @@ export async function getStaticProps() {
 
 export default function Home({ drinks }) {
 
+  /* Znajdować się tu będzie string z inputa dotyczącego wyszukiwarki */
   const [value, setValue] = useState("");
-
-  const handleSearchChange = (e) => {
-    console.log(e.target.value)
-    setValue(e.target.value);
-  }
-
-  /*==================================================================================================================================
-                                                Podpowiedzi przy wyszukiwaniu
-  ===================================================================================================================================*/
-  //Refernecja, która będzie potrzebna do ustawienia focusa i blura w search input
-  const searchInput = useRef(null);
-
-  //Ustalanie stanu podpowiedzi, czy mają się wyświetlać, czy nie
-  const [tips, setTips] = useState(false);
-
-  const handleSearchClick = () => {
-    setTips(!tips);
-  }
-  const handleShowTipsClick = () => {
-    setTips(!tips);
-  }
-  const handleSelectedTipClick = (e) => {
-    setValue(e.currentTarget.getAttribute('value'))
-    setTips(!tips);
-    searchInput.current.focus();
-  }
-  const handleSelectedFiltersMenuOpen = () => {
-    setTips(false);
-    searchInput.current.blur();
-  }
 
   /*==================================================================================================================================
                                                 Pofiltrowane wszystkie składniki 
@@ -80,16 +45,17 @@ export default function Home({ drinks }) {
     if (a > b) { return 1; }
     return 0;
   })
-  console.log(uniqueIngredients)
+
   /*================================================================================================================================= */
 
   /*==================================================================================================================================
                                                 Wybór filtrów do zaawansowanego wyszukiwania
   ===================================================================================================================================*/
+
+  //Na podstawie tego zostaną utworzone odpowiednie opcje do wyboru w dropdown w filtrach
   let options = uniqueIngredients.map(drink => (
     { value: drink, label: drink.charAt(0).toUpperCase() + drink.slice(1) }
   ));
-  console.log(options)
 
   const [selectedFilters, setSelectedFilters] = useState([]);
 
@@ -98,17 +64,6 @@ export default function Home({ drinks }) {
     setSelectedFilters(Array.isArray(e) ? e.map(x => x.value) : []);
   }
   /*================================================================================================================================= */
-
-  //wyszukiwanie drinka po nazwie
-  const searchDrink = drinks.filter(drink => {
-    return drink.name.toLocaleLowerCase().includes(value.toLocaleLowerCase())
-  })
-  console.log("drin")
-  console.log(searchDrink)
-
-  const filters = ['woda gazowana', 'limonka', 'mięta', 'cytryna'];
-  console.log(filters.length > 1 && "Istnieje")
-
 
   const filteredDrinksSearch = drinks.filter(drink => {
     const ingredientsTable = [drink.ingredient1, drink.ingredient2, drink.ingredient3, drink.ingredient4, drink.ingredient5, drink.ingredient6]
@@ -127,120 +82,122 @@ export default function Home({ drinks }) {
     const ingredientsTableWithoutNull = ingredientsTable.filter(drink => {
       return drink != null;
     });
-    console.log(ingredientsTableWithoutNull);
 
     return selectedFilters.every(ingredient => ingredientsTableWithoutNull.includes(ingredient)) && drink.name.toLocaleLowerCase().includes(value.toLocaleLowerCase());
 
   })
-  console.log(filteredDrinksSearch);
-  console.log(selectedFilters)
 
-  /*==================================================================================================================================
-                                          Stan wyświetlenia panelu wyszukiwania i panelu filtrów 
-===================================================================================================================================*/
-  const [showSearchPanel, setShowSearchPanel] = useState(true);
-  const [showFiltersPanel, setShowFiltersPanel] = useState(true);
-  /*================================================================================================================================= */
 
+  /* =========================================================================================================================================================
+                                          Związane z wyszukiwarką w React Select (single value select)
+  ===========================================================================================================================================================*/
+
+
+  //Ustawienie wartości value podczas wpisywania wartości drinka w wyszukiwarce w react-select
+  const handleSearchInputChange = (value, e) => {
+    if (e.action === 'input-change') {
+      setValue(value);
+    } else {
+      return
+    }
+  }
+
+  //Ten stan będzie używany w useEffect i podczas wyboru drinka z dropdown menu w react select, gdy zostanie wybrana opcja z dropdown menu wtedy zmieni się stan i w useEffect zostanie to wykorzystane
+  const [selectSingleValue, setSelectSingleValue] = useState("");
+
+  //Ustawienie wartości value podczas wyboru drinka w wyszukiwarce poprzez dropdown menu w react-select
+  const handleSearchChange = (e) => {
+    setValue(e ? e.value : "");
+    setSelectSingleValue(document.querySelector(".react-select__single-value"));
+  }
+
+  /*=======================================================================================================================================================
+   Gdy użytkownik coś wpisuje w wyszukiwarce niech pokazują się odpowiednie podpowiedzi, będzie do użyte w react select dla zwykłej wyszukiwarki i będzie znajdowało się w options
+  =========================================================================================================================================================*/
+
+  //wyszukiwanie drinka po nazwie (będą znajdować się tu wszystkie drinki, które zawierają jakąś wartość z inputa)
+  const searchDrink = drinks.filter(drink => {
+    return drink.name.toLocaleLowerCase().includes(value.toLocaleLowerCase())
+  })
+
+  //Na podstawie tego zostaną utworzone odpowiednie opcje do wyboru w dropdown
+  let searchOptions = searchDrink.map(drink => (
+    { value: drink.name, label: drink.name.charAt(0).toUpperCase() + drink.name.slice(1) }
+  ));
+
+
+  //useEffect służacy do "nasłuchiwania" zmian w value i selectSingleValue, aby dostosować margines w celu dokładnego wyrównania podczas wyboru wartości z dropdown menu w react select oraz zwykłego wpisywania wartości w inpucie związanym w react select (inaczej kontenery są zbudowane, gdy dokonywany jest wybór z drop down menu, a wpisywaniem w inpucie)
+  useEffect(() => {
+
+    const reactSelectValueContainer = document.querySelector(".react-select__value-container");
+    const reactSelectContainerWithValue = document.querySelector(".react-select__value-container--has-value");
+    const reactSelectSingleValue = document.querySelector(".react-select__single-value");
+
+    let width = '';
+
+    if (reactSelectContainerWithValue && reactSelectSingleValue) {
+      width = reactSelectSingleValue.clientWidth;
+      reactSelectContainerWithValue.style.marginLeft = `${width + 35.5}px`; //szerokosc ile zajmuje teskt + 35.5px (szerokość jednego z "indicators")
+    }
+    else if (document.querySelector(".react-select-single-select-container .react-select__value-container--has-value")) {
+      document.querySelector(".react-select-single-select-container .react-select__value-container--has-value").style.marginLeft = '36px'; //ta wartość wynika z szerokości jednego z indicators
+    }
+    else {
+      reactSelectValueContainer.style.marginLeft = '0px';
+    }
+
+  }, [selectSingleValue, value]);
 
   return (
     <>
       <div className={styles.container}>
-        <nav className={styles.navigation}>
-          <div className={styles.navigation__logoAndMenuContainer}>
-            <div className={`${styles.logoContainer} ${showSearchPanel && styles['logoContainer--disableContainer']}`}>
-              <Logo viewBox="0 0 23 38" className={`${styles.logoContainer__logo} ${styles.icon}`} />
-              <h1 className={styles.logoContainer__logoName}>Drink Share</h1>
-            </div>
-            <div className={`${styles.menuContainer} ${showSearchPanel && styles['menuContainer--searchOpened']}`}>
-              <SearchMagnifier onClick={() => setShowSearchPanel(true)} viewBox="0 0 20 20" className={styles.menuContainer__searchIcon} />
-              {showSearchPanel ?
-                <>
-                  <input ref={searchInput} type="text" spellCheck="false" value={value} onChange={handleSearchChange} onClick={handleSearchClick} className={styles.menuContainer__searchInput} />
-                  <Close onClick={() => { setShowSearchPanel(false); setValue("") }} viewBox="0 0 16 16" className={styles.menuContainer__closeSearch} />
-                </>
-                :
-                <Menu viewBox="0 0 20 12" className={styles.menuContainer__mainMenu} />
-              }
-            </div>
-          </div>
-          <div className={styles.toggleFiltersContainer}>
 
-            {showFiltersPanel ?
-              <FilterFillIcon onClick={() => setShowFiltersPanel(!showFiltersPanel)} viewBox="0 0 16 16" className={styles.toggleFiltersContainer__filterIcon} />
-              :
-              <div onClick={() => setShowFiltersPanel(!showFiltersPanel)} className={styles.toggleFiltersContainer__informationAndIconContainer}>
-                <p className={styles.toggleFiltersContainer__information}>Filtry</p>
-                <FilterIcon viewBox="0 0 16 16" className={styles.toggleFiltersContainer__filterIcon} />
-              </div>
-            }
-          </div>
-          {showFiltersPanel &&
-            <div className={`${styles.filtersContainer}`}>
+        <div className={styles.drinkFinderContainer}>
+          <SearchMagnifier className={styles.drinkFinderContainer__icon} />
+          <div className={styles.searchAndFiltersContainer}>
+            <div className={styles.searchAndFiltersContainer__searchContainer}>
+
+
+              <Select id="single-value-select" instanceId="single-value-select"
+                className='react-select-container react-select-single-select-container'
+                classNamePrefix='react-select'
+                placeholder="Szukaj po nazwie"
+                name="color"
+                options={searchOptions}
+                isClearable={true}
+                value={searchOptions.filter(obj => value.includes(obj.value))}
+                onChange={handleSearchChange}
+                onInputChange={handleSearchInputChange}
+                inputValue={value}
+                noOptionsMessage={() => 'Nie ma takiego drinka'}
+              />
+
+            </div>
+
+            <div className={styles.searchAndFiltersContainer__filtersContainer}>
               <Select id="long-value-select" instanceId="long-value-select"
-                //className={`${styles['react-select-container']}`}
                 className='react-select-container'
                 classNamePrefix='react-select'
-                placeholder="Szukaj po składnikach"
+                placeholder="Filtruj po składnikach"
                 value={options.filter(obj => selectedFilters.includes(obj.value))} // ustawia wartości (filtry) wybrane przez użytkownika (ustawi je dodatkowo alfabetycznie)
                 options={options} // opcje (filtry) do wyboru
-                onMenuOpen={handleSelectedFiltersMenuOpen}
                 onChange={handleSelectedFiltersChange}
                 isMulti
-                noOptionsMessage={() => 'Nie ma więcej filtrów'}
+                noOptionsMessage={() => 'Nie ma filtrów'}
               />
             </div>
-          }
-        </nav>
-        {/*        <Link href="/przepisy/dodaj-drinka">
-          <button>Dodaj Drinka</button>
-        </Link> */}
-        <input ref={searchInput} type="text" value={value} onChange={handleSearchChange} onClick={handleSearchClick} />
-        <button onClick={handleShowTipsClick}>Show Tips Placeholder</button>
-        {tips &&
-          <ul>
-            {filteredDrinksSearch.map(drink => (
-              <li onClick={handleSelectedTipClick} key={drink.id} value={drink.name.charAt(0).toUpperCase() + drink.name.slice(1)}>{drink.name.charAt(0).toUpperCase() + drink.name.slice(1)}</li>
-            ))}
-          </ul>
-        }
-        <h1>Main Page</h1>
-        {filteredDrinksSearch.length === 0 && <h1>Nie ma drinków</h1>}
-        {filteredDrinksSearch.map(drink => (
-          <DrinkCard key={drink.id} drink={drink} />
-        ))}
-      </div>
 
+          </div>
+        </div>
 
-
-      {/* <div className={styles.sprawdz}>
-      <Link href="/przepisy/dodaj-drinka">
-        <button>Dodaj Drinka</button>
-      </Link>
-      <Select id="long-value-select" instanceId="long-value-select"
-        placeholder="Szukaj po składnikach"
-        value={options.filter(obj => selectedFilters.includes(obj.value))} // ustawia wartości (filtry) wybrane przez użytkownika (ustawi je dodatkowo alfabetycznie)
-        options={options} // opcje (filtry) do wyboru
-        onMenuOpen={handleSelectedFiltersMenuOpen}
-        onChange={handleSelectedFiltersChange}
-        isMulti
-        noOptionsMessage={() => 'Nie ma więcej filtrów'}
-      />
-      <input ref={searchInput} type="text" value={value} onChange={handleSearchChange} onClick={handleSearchClick} />
-      <button onClick={handleShowTipsClick}>Show Tips Placeholder</button>
-      {tips &&
-        <ul>
+        <h1 className={styles.drinksHeading}>Lista Drinków</h1>
+        {filteredDrinksSearch.length === 0 && <h2 className={styles.main__noDrinks}>Brak przepisów</h2>}
+        <div className={styles.drinksContainer}>
           {filteredDrinksSearch.map(drink => (
-            <li onClick={handleSelectedTipClick} key={drink.id} value={drink.name.charAt(0).toUpperCase() + drink.name.slice(1)}>{drink.name.charAt(0).toUpperCase() + drink.name.slice(1)}</li>
+            <DrinkCard key={drink.id} drink={drink} />
           ))}
-        </ul>
-      }
-      <h1>Main Page</h1>
-      {filteredDrinksSearch.length === 0 && <h1>Nie ma drinków</h1>}
-      {filteredDrinksSearch.map(drink => (
-        <DrinkCard key={drink.id} drink={drink} />
-      ))}
-    </div> */}
+        </div>
+      </div>
     </>
   )
 }

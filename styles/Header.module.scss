@@ -1,0 +1,249 @@
+@import './Mixins.scss';
+@import './Fonts.scss';
+@import './Colors.scss';
+@import './Resolutions.scss';
+
+
+.header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 2.3rem 1.9rem;
+    box-shadow: 0px 1px 3px 1px rgba(0,0,0,0.3);
+    color: white;
+    font-family: $fontRasa;
+    font-size: 1.6rem;
+    font-weight: 400;
+
+    @include universalLandscape() {
+        justify-content: flex-start;
+    }
+}
+
+.navigationMobile {
+    @include universalLandscape() {
+        display: none;
+    }
+
+    &__logoContainer {
+        display: flex;
+        align-items: center;
+    }
+
+    &__logo {
+        position: relative;
+        bottom: .8rem;
+        margin-right: 2.2rem;
+    }
+
+    &__logoName {
+        position: relative;
+        font-size: 2.8rem;
+        font-style: normal;
+        font-weight: 400;
+    }
+}
+
+.navigation {
+    display: none;
+    align-items: center;
+    width: 100%;
+
+    @include universalLandscape() {
+        display: flex;
+        justify-content: space-between;
+    }
+    
+    &__item {
+        all: unset; //zresetowanie właściwości buttona jeśli item jest buttonem na początku
+        cursor: pointer;
+        margin: 0 2rem;
+        text-transform: uppercase;
+        background:
+        linear-gradient($orange 0 0) bottom /var(--d, 0) .10vw no-repeat;
+        transition: 0.5s;
+
+        button {
+            all: unset;
+        }
+
+        &:hover {
+            --d: 100%;
+        }
+
+        &:before {
+            font-family: "Font Awesome 5 Free";
+            font-size: calc(10px + .37vw);
+            font-weight: 900;
+            color: $orange;
+            position: relative;
+            margin-right: .5rem;
+        }
+
+        &--login {
+            &:before {
+                content: "\f2f6";
+                bottom: -.1rem;
+            }
+        }
+
+        &--logout {
+            &:before {
+                content: "\f2f5";
+                bottom: -.1rem;
+            }
+        }
+
+        &--myDrinks {
+            &:before {
+                content: "\f561";
+                bottom: .1rem;
+            } 
+        }
+
+        &--addDrink {
+            &:before {
+                content: "\f65e";
+                bottom: -.1rem;
+            }
+        }
+    }
+}
+
+.logoContainer {
+    display: flex;
+    align-items: center;
+
+    &__logo {
+        position: relative;
+        bottom: .8rem;
+        margin-right: 2.2rem;
+    }
+
+    &__logoName {
+        position: relative;
+        font-size: 2.8rem;
+        font-style: normal;
+        font-weight: 400;
+    }
+}
+
+.burgerMenu {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+
+    @include universalLandscape() {
+        display: none;
+    }
+
+    &__iconContainer {
+        position: relative;
+        width: 2rem;
+        height: .2rem;
+        background-color: white;
+        transition: .5s ease-in-out;
+
+        &:after, &:before {
+            content: '';
+            position: absolute;
+            display: block;
+            width: 2rem;
+            height: .2rem;
+            background-color: inherit;
+        }
+
+        &:after {
+            transition: .5s ease-in-out;
+            bottom: .6rem;
+        }
+
+        &:before {
+            transition: .5s ease-in-out;
+            top: .6rem;
+        }
+
+        &--open {
+            background-color: transparent;
+
+            &:after {
+                top:0rem;
+                transform: rotate(135deg);
+                background-color: white;
+            }
+    
+            &:before {
+                top:0rem;
+                transform: rotate(-135deg);
+                background-color: white;
+            }
+        }
+    }
+}
+
+.mobileMenuContainer {
+    position: absolute;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    display: grid;
+    place-items: center;
+    padding: 2rem;
+    width: 100%;
+    top: 8.6rem;
+    background: #1a1a1a;
+    opacity: .99;
+    z-index: 2;
+
+    &__navButton {
+        all: unset;
+        font-size: 3.5vh;
+        line-height: 4.3rem;
+        font-family: $fontRasa;
+        text-align: center;
+
+        button {
+            all: unset;
+        }
+
+        &:before {
+            font-family: "Font Awesome 5 Free";
+            font-size: 3.5vh;
+            font-weight: 900;
+            color: $orange;
+            position: relative;
+            margin-right: 1rem;
+        }
+
+        &--login {
+            display: flex;
+            align-items: center;
+            &:before {
+                content: "\f2f6";
+                bottom: .1rem;
+            }
+        }
+
+        &--logout {
+            &:before {
+                content: "\f2f5";
+                bottom: -.3rem;
+            }
+        }
+
+        &--myDrinks {
+            &:before {
+                content: "\f561";
+                bottom: .1rem;
+            } 
+        }
+
+        &--addDrink {
+            &:before {
+                content: "\f65e";
+                bottom: -.1rem;
+            }
+        }
+    }
+}
