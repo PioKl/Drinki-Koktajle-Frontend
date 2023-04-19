@@ -3,7 +3,7 @@ import styles from '../../styles/Recipe.module.scss';
 import { useState } from "react";
 
 
-export async function getStaticPaths() {
+/* export async function getStaticPaths() {
     const res = await fetch(`${API_URL}/drinks`)
     const drinks = await res.json()
 
@@ -32,6 +32,24 @@ export async function getStaticProps({ params: { slug } }) {
             props: {
                 drink: drinks[0],
                 revalidate: 1,
+            }
+        }
+} */
+
+
+export async function getServerSideProps({ query: { slug }}) {
+    const res = await fetch(`${API_URL}/drinks?slug=${slug}`);
+    const drinks = await res.json();
+    if (!drinks.length) {
+        return {
+            props: {} //puste propsy, w celu pozbycia się błędu
+        }
+    }
+    else
+        return {
+            props: {
+                drink: drinks[0],
+                //revalidate: 1,
             }
         }
 }
