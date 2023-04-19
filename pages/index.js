@@ -7,13 +7,12 @@ import styles from '../styles/MainPage.module.scss';
 import SearchMagnifier from '../icons/searchIcon.svg';
 
 
-export async function getStaticProps() {
+export async function getServerSideProps() {
   const res = await fetch(`${API_URL}/drinks`);
   const drinks = await res.json()
 
   return {
     props: { drinks },
-    revalidate: 1,
   }
 }
 

@@ -49,7 +49,6 @@ export async function getServerSideProps({ query: { slug }}) {
         return {
             props: {
                 drink: drinks[0],
-                //revalidate: 1,
             }
         }
 }
