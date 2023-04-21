@@ -22,6 +22,9 @@ export default function AddDrink({ token }) {
 
     const router = useRouter();
 
+    //State dodany w celu włączenia i wyłączenia loadera przy dodawaniu
+    const [addEditLoader, setAddEditLoader] = useState(false);
+
     //Jeśli użytkownik nie jest zalogowany to przekierwoanie na stronę logowania
     useEffect(() => {
         if (token === null) {
@@ -280,6 +283,7 @@ export default function AddDrink({ token }) {
         formValidation();
 
         if (validation === true) {
+            setAddEditLoader(true);
 
             //Dodanie wartości i zdjęcia do bazy danych
             const formData = new FormData();
@@ -295,6 +299,7 @@ export default function AddDrink({ token }) {
             });
 
             if (!res.ok) {
+                setAddEditLoader(false);
                 if (res.status === 403 || res.status === 401) {
                     toast.error(
                         <div>
@@ -471,7 +476,7 @@ export default function AddDrink({ token }) {
 
                             <div className={styles.formContainer__creationFormField}>
                                 <label className={styles.formContainer__creationLabel} htmlFor="author">Źródło <span className={styles.formContainer__creationBrackets}>(wpisz autora, bądź nazwę strony, jeśli drink został dodany na podstawie czyjegoś przepisu)</span></label>
-                                <input className={styles.formContainer__creationInput} type="text" name="author" id="author" value={values.author} onChange={handleInputChange}/>
+                                <input className={styles.formContainer__creationInput} type="text" name="author" id="author" value={values.author} onChange={handleInputChange} />
                             </div>
 
                             <div className={styles.formContainer__creationFormField}>
@@ -503,7 +508,11 @@ export default function AddDrink({ token }) {
                                     </div>
                                 }
                             </div>
-                            <button className={`${styles.formContainer__button} ${styles['formContainer__button--drinkCreation']}`} type="submit">Dodaj Drinka</button>
+                            <div className={`${styles.formContainer__buttonContainer} ${styles['formContainer__buttonContainer--drinkCreation']}`}>
+                                <button className={`${styles.formContainer__button}`} type="submit">Dodaj Drinka</button>
+                                {addEditLoader && <div className={styles.formContainer__buttonLoader}></div>}
+                            </div>
+
                         </form>
                     </div>
                 </>

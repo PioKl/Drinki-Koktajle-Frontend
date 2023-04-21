@@ -11,10 +11,10 @@ export default function RegisterPage() {
     const [password, setPassword] = useState('');
     const [passwordConfirm, setPasswordConfirm] = useState('');
 
-    const { register, error } = useContext(AuthContext);
+    const { register, error, authLoader } = useContext(AuthContext);
 
     useEffect(() => error && toast.error(error));
-    
+
     const handleSubmit = (e) => {
         e.preventDefault();
         if (password !== passwordConfirm) {
@@ -30,40 +30,43 @@ export default function RegisterPage() {
             return
         }
 
-        register({username, email, password});
+        register({ username, email, password });
     }
 
     return (
         <>
-        <ToastContainer />
-        <div className={styles.forms}>
-            <div className={styles.formContainer}>
-                <h1 className={styles.formContainer__heading}>Zarejestruj</h1>
-                <form onSubmit={handleSubmit}>
-                    <div className={styles.formContainer__formField}>
-                        <label className={styles.formContainer__label} htmlFor="userName">Nazwa użytkownika</label>
-                        <input className={styles.formContainer__input} placeholder="Nazwa użytkownika" type="text" id="userName" value={username} onChange={(e) => setUserName(e.target.value)}/>
+            <ToastContainer />
+            <div className={styles.forms}>
+                <div className={styles.formContainer}>
+                    <h1 className={styles.formContainer__heading}>Zarejestruj</h1>
+                    <form onSubmit={handleSubmit}>
+                        <div className={styles.formContainer__formField}>
+                            <label className={styles.formContainer__label} htmlFor="userName">Nazwa użytkownika</label>
+                            <input className={styles.formContainer__input} placeholder="Nazwa użytkownika" type="text" id="userName" value={username} onChange={(e) => setUserName(e.target.value)} />
+                        </div>
+                        <div className={styles.formContainer__formField}>
+                            <label className={styles.formContainer__label} htmlFor="email">Adres email</label>
+                            <input className={styles.formContainer__input} placeholder="Adres e-mail" type="email" id="email" value={email} onChange={(e) => setEmail(e.target.value)} />
+                        </div>
+                        <div className={styles.formContainer__formField}>
+                            <label className={styles.formContainer__label} htmlFor="password">Hasło</label>
+                            <input className={styles.formContainer__input} placeholder="Hasło" type="password" id="password" autoComplete="on" value={password} onChange={(e) => setPassword(e.target.value)} />
+                        </div>
+                        <div className={styles.formContainer__formField}>
+                            <label className={styles.formContainer__label} htmlFor="passwordConfirm">Potwierdź Hasło</label>
+                            <input className={styles.formContainer__input} placeholder="Potwierdź hasło" type="password" id="passwordConfirm" autoComplete="on" value={passwordConfirm} onChange={(e) => setPasswordConfirm(e.target.value)} />
+                        </div>
+                        <div className={styles.formContainer__buttonContainer}>
+                            <button className={styles.formContainer__button} type="submit">Zarejestruj</button>
+                            {authLoader && <div className={styles.formContainer__buttonLoader}></div>}
+                        </div>
+                    </form>
+                    <div className={styles.formContainer__linkContainer}>
+                        <p>Masz już konto? <Link href="/konto/zaloguj"><a className={styles.formContainer__link}>Zaloguj</a></Link></p>
                     </div>
-                    <div className={styles.formContainer__formField}>
-                        <label className={styles.formContainer__label} htmlFor="email">Adres email</label>
-                        <input className={styles.formContainer__input} placeholder="Adres e-mail" type="email" id="email" value={email} onChange={(e) => setEmail(e.target.value)}/>
-                    </div>
-                    <div className={styles.formContainer__formField}>
-                        <label className={styles.formContainer__label} htmlFor="password">Hasło</label>
-                        <input className={styles.formContainer__input} placeholder="Hasło" type="password" id="password" autoComplete="on" value={password} onChange={(e) => setPassword(e.target.value)}/>
-                    </div>
-                    <div className={styles.formContainer__formField}>
-                        <label className={styles.formContainer__label} htmlFor="passwordConfirm">Potwierdź Hasło</label>
-                        <input className={styles.formContainer__input} placeholder="Potwierdź hasło" type="password" id="passwordConfirm" autoComplete="on" value={passwordConfirm} onChange={(e) => setPasswordConfirm(e.target.value)}/>
-                    </div>
-                    <button className={styles.formContainer__button} type="submit">Zarejestruj</button>
-                </form>
-                <div className={styles.formContainer__linkContainer}>
-                    <p>Masz już konto? <Link href="/konto/zaloguj"><a className={styles.formContainer__link}>Zaloguj</a></Link></p>
+
                 </div>
-                
             </div>
-        </div>
         </>
     )
 }

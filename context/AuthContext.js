@@ -7,6 +7,7 @@ const AuthContext = createContext();
 export const AuthProvider = ({ children }) => {
     const [user, setUser] = useState(null);
     const [error, setError] = useState(null);
+    const [authLoader, setAuthLoader] = useState(false); //w celu włączenia i wyłączenia loadera na zaloguj/zarejestruj
 
     //sprawdzanie, czy użytkownik się zmienił
     useEffect(() => checkUserLoggedIn(), []);
@@ -65,6 +66,7 @@ export const AuthProvider = ({ children }) => {
         //Jeśli odpowiedź jest prawidłowa, dane z bazy danych w strapi są prawidłowe z tymi z api/login to ustaw te dane za pomocą setUser, user dysponuje w tym momencie poprawnymi danymi z zalogowania
         if (response.ok) {
             setUser(data.user);
+            setAuthLoader(true);
             //po prawidłowym zalogowaniu przekieruj użytkownika w te miejsce
             router.push('/konto/moje-drinki');
         }
@@ -78,8 +80,9 @@ export const AuthProvider = ({ children }) => {
             }
             else if (data.message === "Please provide your password.") {
                 setError("Proszę wpisać hasło")
-            } else return
+            } else return;
 
+            setAuthLoader(false);
             setError(null);
         }
     }
@@ -92,6 +95,7 @@ export const AuthProvider = ({ children }) => {
         })
         if (response.ok) {
             setUser(null);
+            setAuthLoader(false);
             router.push('/');
         }
     }
@@ -110,7 +114,7 @@ export const AuthProvider = ({ children }) => {
     }
 
     return (
-        <AuthContext.Provider value={{ user, error, register, login, logout }}>
+        <AuthContext.Provider value={{ user, error, authLoader, register, login, logout }}>
             {children}
         </AuthContext.Provider>
     )

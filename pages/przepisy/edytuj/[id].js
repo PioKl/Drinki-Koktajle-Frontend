@@ -33,6 +33,9 @@ export async function getServerSideProps({ params: { id }, req }) {
 export default function EditDrink({ drink, token, empty }) {
 
     const router = useRouter();
+    
+    //State dodany w celu włączenia i wyłączenia loadera przy edycji
+    const [addEditLoader, setAddEditLoader] = useState(false);
 
     useEffect(() => {
         if (token === null) {
@@ -279,6 +282,8 @@ export default function EditDrink({ drink, token, empty }) {
         formValidation();
 
         if (validation === true) {
+            setAddEditLoader(true);
+
             //Dodanie edytowanych wartości i zdjęcia do bazy danych
             const formData = new FormData();
             formData.append('data', JSON.stringify(values));
@@ -293,6 +298,7 @@ export default function EditDrink({ drink, token, empty }) {
             })
 
             if (!res.ok) {
+                setAddEditLoader(false);
                 if (res.status === 403 || res.status === 401) {
                     toast.error('Brak autoryzacji')
                     return
@@ -493,7 +499,11 @@ export default function EditDrink({ drink, token, empty }) {
                             </div>
 
                             <div className={styles.formContainer__editButtonContainer}>
-                                <button className={`${styles.formContainer__button} ${styles['formContainer__button--drinkCreation']}`} type="submit">Edytuj Drinka</button>
+                                <div className={`${styles.formContainer__buttonContainer} ${styles['formContainer__buttonContainer--drinkCreation']}`}>
+                                    <button className={`${styles.formContainer__button}`} type="submit">Edytuj Drinka</button>
+                                    {addEditLoader && <div className={styles.formContainer__buttonLoader}></div>}
+                                </div>
+{/*                                 <button className={`${styles.formContainer__button} ${styles['formContainer__button--drinkCreation']}`} type="submit">Edytuj Drinka</button> */}
                                 <Link href={`/przepisy/${drink.slug}`}><a><button className={`${styles.formContainer__button} ${styles['formContainer__button--drinkCreation']} ${styles['formContainer__button--cancel']}`}>Anuluj</button></a></Link>
                             </div>
 

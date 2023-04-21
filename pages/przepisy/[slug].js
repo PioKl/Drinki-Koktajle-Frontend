@@ -3,41 +3,7 @@ import styles from '../../styles/Recipe.module.scss';
 import { useState } from "react";
 
 
-/* export async function getStaticPaths() {
-    const res = await fetch(`${API_URL}/drinks`)
-    const drinks = await res.json()
-
-    const paths = drinks.map(drink => ({
-        params: { slug: drink.slug }
-    }));
-
-    return {
-        paths,
-        fallback: true,
-    }
-}
-
-//te params ponizej pochodza, z paramsów z getStaticPaths
-export async function getStaticProps({ params: { slug } }) {
-
-    const res = await fetch(`${API_URL}/drinks?slug=${slug}`);
-    const drinks = await res.json();
-    if (!drinks.length) {
-        return {
-            props: {} //puste propsy, w celu pozbycia się błędu
-        }
-    }
-    else
-        return {
-            props: {
-                drink: drinks[0],
-                revalidate: 1,
-            }
-        }
-} */
-
-
-export async function getServerSideProps({ query: { slug }}) {
+export async function getServerSideProps({ query: { slug } }) {
     const res = await fetch(`${API_URL}/drinks?slug=${slug}`);
     const drinks = await res.json();
     if (!drinks.length) {
@@ -105,16 +71,15 @@ export default function DrinkDetails({ drink }) {
                     <div id="recipeIngredientsSection" className={`${styles.recipeIngredientsContainer} ${(drink.video || drink.description) && styles['recipeIngredientsContainer--shadow']}`}>
                         <h2 className={styles.recipeIngredientsContainer__heading}>Składniki</h2>
                         <div className={styles.recipeIngredientsContainer__ingredientsAndMeasuresLists}>
-                            <ul className={`${styles.recipeIngredientsContainer__itemList} ${styles.recipeIngredientsContainer__ingredientsList}`}>
-                                {ingredientList.map((ingredient, id) => ingredient ?
-                                    <li className={styles.recipeIngredientsContainer__item} key={id}>{ingredient}</li> : null
-                                )}
-                            </ul>
-                            <ul className={`${styles.recipeIngredientsContainer__itemList} ${styles.recipeIngredientsContainer__measuresList}`}>
-                                {measureList.map((measure, id) => measure ?
-                                    <li className={`${styles.recipeIngredientsContainer__item} ${styles['recipeIngredientsContainer__item--measure']}`} key={id}>{measure}</li> : null
-                                )}
-                            </ul>
+
+                            {ingredientList.map((ingredient, id) =>
+                                ingredient && <ul className={`${styles.recipeIngredientsContainer__itemList} ${styles.recipeIngredientsContainer__ingredientsList}`} key={id}>
+                                    {ingredient ? <li className={`${styles.recipeIngredientsContainer__item} ${styles['recipeIngredientsContainer__item--ingredient']}`} key={id}>{ingredient}</li> : null}
+                                    {measureList.map((measure, measureId) =>
+                                        measure ? (measureId === id && <li className={`${styles.recipeIngredientsContainer__item} ${styles['recipeIngredientsContainer__item--measure']}`} key={measureId}>{measure}</li>) : null
+                                    )}
+                                </ul>
+                            )}
                         </div>
                     </div>
 

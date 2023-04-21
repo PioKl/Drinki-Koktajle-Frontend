@@ -99,6 +99,15 @@
         }
     }
 
+    &__buttonContainer {
+        position: relative;
+        margin-bottom: 3rem;
+
+        &--drinkCreation {
+            margin-bottom: 0;
+        }
+    }
+
     &__button {
         cursor: pointer;
         position: relative;
@@ -106,7 +115,6 @@
         font-size: calc(16px + .62vw);
         font-family: inherit;
         width: 100%;
-        margin-bottom: 3rem;
         color: white;
         text-transform: uppercase;
         border: none;
@@ -117,10 +125,41 @@
         @include universalLandscape() {
             font-size: calc(10px + .4vw);
         }
+    }
 
-        &--drinkCreation {
-            margin-bottom: 0;
+    &__buttonLoader {
+        position: absolute;
+        top:50%;
+        left: 50%;
+        z-index: 2;
+        transform: translate(-50%, -50%);
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        width: 100%;
+        height: 100%;
+        background-color: $orange;
+        border-radius: 5px;
+
+        &:after {
+            content: " ";
+            display: block;
+            width: 34px;
+            height: 34px;
+            border-radius: 50%;
+            border: 6px solid #fff;
+            border-color: #fff transparent #fff transparent;
+            animation: loaderSpinner 1.2s linear infinite;
         }
+
+        @keyframes loaderSpinner {
+            0% {
+              transform: rotate(0deg);
+            }
+            100% {
+              transform: rotate(360deg);
+            }
+          }
     }
 
     &__linkContainer {

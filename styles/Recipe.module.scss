@@ -229,13 +229,21 @@ $recipeUniversalSpace: 2.3rem;
     }
 
     &__ingredientsAndMeasuresLists {
-        display: flex;   
+        display: flex;
+        flex-direction: column;
+        padding-bottom: 1.8rem;
+        @media screen and (min-width: $laptop) {
+            padding-bottom: 0;
+        }
+
     }
 
     &__itemList {
+        padding-bottom: .5rem;
         font-size: calc(14px + .62vw);
 
         @media screen and (min-width: $laptop) {
+            padding-bottom: 2rem;
             font-size: calc(10px + .4vw);
             text-align: left;
         }
@@ -243,25 +251,40 @@ $recipeUniversalSpace: 2.3rem;
 
 
     &__item {
+        margin-right: 1.6rem;
+
         list-style-type: disc;
         list-style-position: inside;
         &::marker {
             color: $orange;
         }
+
+        &--ingredient {
+            max-width: 20rem;
+        }
+
+        &--ingredient, 
         &--measure {
+            width: 100%;
+        }
+
+        &--measure {
+            margin: 0;
             list-style: none;
+            word-break: break-word;
         }
         @media screen and (min-width: $laptop) {
-            padding-bottom: 2rem;
+            margin-right: 5rem;
+
+            &--measure {
+                margin: 0;
+            }
         }
     }
 
-    &__ingredientsList {
-        margin-right: 1.6rem;
 
-        @media screen and (min-width: $laptop) {
-            margin-right: 5rem;
-        }
+    &__ingredientsList {
+        display: flex;
     }
 }
 
