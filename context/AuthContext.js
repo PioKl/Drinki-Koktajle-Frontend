@@ -29,6 +29,7 @@ export const AuthProvider = ({ children }) => {
         //Jeśli odpowiedź jest prawidłowa, rejestracja przeszła pomyślnie, wszystko w api/register jest w porządku, to ustaw user danymi (setUser), które przyszły z api/register (tam dane zostaną przekazane do bazy danych w strapi, a następnie te dane zostaną przekazane tutaj)
         if (response.ok) {
             setUser(data.user);
+            setAuthLoader(true);
             //po prawidłowym zarejestrowaniu przekieruj użytkownika w te miejsce
             router.push('/konto/moje-drinki');
         }
@@ -40,6 +41,7 @@ export const AuthProvider = ({ children }) => {
             else if (data.message === "Please provide your password.") {
                 setError("Proszę wpisać hasło")
             }
+            setAuthLoader(false);
             setError(null);
         }
     }
