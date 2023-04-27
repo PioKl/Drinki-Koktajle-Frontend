@@ -137,6 +137,7 @@ $recipeUniversalSpace: 2.3rem;
     
             @media screen and (min-width: $laptop) {
                 height: 100%;
+                object-fit: contain;
             }  
         }
 
