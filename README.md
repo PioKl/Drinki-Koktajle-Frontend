@@ -5,7 +5,7 @@ Strona o koktajlach/drinkach, dająca możliwość dzielenia się recepturami na
 Frontend: Vercel
 Backend: Strapi, hosting - Render
 
-
+-------------------------------------------------------------------------------------------------------------------------------------------------------------
 
 This is a [Next.js](https://nextjs.org/) project bootstrapped with [`create-next-app`](https://github.com/vercel/next.js/tree/canary/packages/create-next-app).
 
