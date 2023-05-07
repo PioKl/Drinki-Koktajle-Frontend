@@ -205,7 +205,7 @@ $recipeUniversalSpace: 2.3rem;
             left:50%;
             transform: translateX(-50%);
             z-index: -1;
-            border-radius: 100% 0% 100% 0% / 0% 73% 27% 100%;;
+            border-radius: 100% 73% 100% 0% / 0% 73% 27% 100%;;
             box-shadow: rgba(0, 0, 0, 0.2) 0px 60px 40px -7px;
 
             @media screen and (min-width: $laptop) {
@@ -315,7 +315,7 @@ $recipeUniversalSpace: 2.3rem;
             left:50%;
             transform: translateX(-50%);
             z-index: -1;
-            border-radius: 100% 0% 100% 0% / 0% 73% 27% 100%;
+            border-radius: 100% 73% 100% 0/0 73% 27% 100%;
             box-shadow: rgba(0, 0, 0, 0.25) 0px 25px 50px -12px;
     
             @media screen and (min-width: $laptop) {
