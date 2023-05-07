@@ -1,5 +1,11 @@
-WORK IN PROGRESS
+Link: https://drinkshare.vercel.app/
 
+Strona o koktajlach/drinkach, dająca możliwość dzielenia się recepturami na przeróżne wcześniej wspomniane drinki i koktajle. Strona przedstawia wszystkie drinki dodane przez użytkowników z możliwością wyszukiwania i filtracji koktajli (pod względem składników). Użytkownik ma możliwość rejestracji, a następnie zalogowania się w celu dodania własnego drinka (składniki, ilość, opis, zdjęcie, filmik), edycji, bądź jego usunięcia. 
+
+Frontend: Vercel,
+Backend: Strapi, hosting - Render
+
+-------------------------------------------------------------------------------------------------------------------------------------------------------------
 
 This is a [Next.js](https://nextjs.org/) project bootstrapped with [`create-next-app`](https://github.com/vercel/next.js/tree/canary/packages/create-next-app).
 
