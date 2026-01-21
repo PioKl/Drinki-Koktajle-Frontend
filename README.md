@@ -1,4 +1,4 @@
-Link: https://drinkshare.vercel.app/
+Link: https://drinkshare.netlify.app/
 
 Strona o koktajlach/drinkach, dająca możliwość dzielenia się recepturami na przeróżne wcześniej wspomniane drinki i koktajle. Strona przedstawia wszystkie drinki dodane przez użytkowników z możliwością wyszukiwania i filtracji koktajli (pod względem składników). Użytkownik ma możliwość rejestracji, a następnie zalogowania się w celu dodania własnego drinka (składniki, ilość, opis, zdjęcie, filmik), edycji, bądź jego usunięcia. 
 
