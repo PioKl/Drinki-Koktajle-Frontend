@@ -10,13 +10,13 @@
   "dependencies": {
     "cookie": "^0.4.1",
     "next": "10.2.3",
-    "node-sass": "^4.14.1",
     "react": "17.0.2",
     "react-dom": "17.0.2",
     "react-select": "^4.3.1",
     "react-toastify": "^7.0.4"
   },
   "devDependencies": {
-    "@svgr/webpack": "^5.5.0"
+    "@svgr/webpack": "^5.5.0",
+    "sass": "^1.97.2"
   }
 }
